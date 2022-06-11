@@ -1,0 +1,59 @@
+DROP TABLE IF EXISTS "Study_Plans";
+CREATE TABLE "Study_Plans" (
+	"matricola"	INTEGER NOT NULL UNIQUE,
+	"courses"	TEXT
+);
+DROP TABLE IF EXISTS "Courses";
+CREATE TABLE "Courses" (
+	"code"	TEXT NOT NULL UNIQUE,
+	"name"	TEXT NOT NULL,
+	"credits"	INTEGER NOT NULL,
+	"curr_students" INTEGER,
+	"max_students"	INTEGER,
+	"incompatible_list"	TEXT,
+	"preparatory_course"	TEXT,
+	PRIMARY KEY("code"),
+	FOREIGN KEY("preparatory_course") REFERENCES "Courses"("code")
+);
+DROP TABLE IF EXISTS "Users";
+CREATE TABLE "Users" (
+	"matricola"	TEXT NOT NULL UNIQUE,
+	"first_name" TEXT NOT NULL,
+	"last_name" TEXT NOT NULL,
+	"password"	TEXT NOT NULL,
+	"salt"	TEXT NOT NULL,
+	PRIMARY KEY("matricola")
+);
+DROP TABLE IF EXISTS "Incompatible_Pairs";
+CREATE TABLE "Incompatible_Pairs" (
+	"course1"	TEXT NOT NULL,
+	"course2"	TEXT NOT NULL
+);
+
+INSERT INTO "Courses"(code, name, credits, curr_students, max_students, incompatible_list, preparatory_course)
+VALUES
+("02GOLOV","Architetture dei sistemi di elaborazione",12,0,null,"02LSEOV",null),
+("02LSEOV","Computer architectures",12,0,null,"02GOLOV",null),
+("01SQJOV","Data Science and Database Technology",8,0,null,"01SQMOV 01SQLOV",null),
+("01SQMOV","Data Science e Tecnologie per le Basi di Dati",8,0,null,"01SQJOV 01SQLOV",null),
+("01SQLOV","Database systems",8,0,null,"01SQJOV 01SQMOV",null),
+("01OTWOV","Computer network technologies and services",6,0,3,"02KPNOV",null),
+("02KPNOV","Tecnologie e servizi di rete",6,0,3,"01OTWOV",null),
+("01TYMOV","Information systems security services",12,0,null,"01UDUOV",null),
+("01UDUOV","Sicurezza dei sistemi informativi",12,0,null,"01TYMOV",null),
+("05BIDOV","Ingegneria del software",6,0,null,"04GSPOV","02GOLOV"),
+("04GSPOV","Software engineering",6,0,null,"05BIDOV","02LSEOV"),
+("01UDFOV","Applicazioni Web I",6,0,null,"01TXYOV",null),
+("01TXYOV","Web Applications I",6,0,3,"01UDFOV",null),
+("01TXSOV","Web Applications II",6,0,null,null,"01TXYOV"),
+("02GRSOV","Programmazione di sistema",6,0,null,"01NYHOV",null),
+("01NYHOV","System and device programming",6,0,3,"02GRSOV",null),
+("01SQOOV","Reti Locali e Data Center",6,0,null,null,null),
+("01TYDOV","Software networking",7,0,null,null,null),
+("03UEWOV","Challenge",5,0,null,null,null),
+("01URROV","Computational intelligence",6,0,null,null,null),
+("01OUZPD","Model based software design",4,0,null,null,null),
+("01URSPD","Internet Video Streaming",6,0,2,null,null);
+
+INSERT INTO Users(matricola, first_name, last_name, password, salt) VALUES ("123456", "Mario", "Rossi", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
+INSERT INTO Study_Plans(matricola, courses) VALUES (123456, "01OUZPD,03UEWOV,01TYDOV,01SQOOV,01NYHOV,02KPNOV,01URROV,01URSPD");
