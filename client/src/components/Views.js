@@ -81,12 +81,7 @@ export function SelectedCoursesView(props) {
 		<Container className='d-block justify-content-center'>
 			{pState.hasLoggedIn && (
 				<Row>
-					{isEmpty ? (
-						<CreateNewStudyPlanView
-							setIsEmpty={setIsEmpty}
-							setIsFullTime={setIsFullTime}
-						/>
-					) : (
+					{isEmpty === false ? (
 						<SelectedCoursesList
 							isEmpty={isEmpty}
 							isFullTime={isFullTime}
@@ -103,6 +98,11 @@ export function SelectedCoursesView(props) {
 								pState.setSelectedCoursesList
 							}
 							setModification={pState.setModification}
+						/>
+					) : (
+						<CreateNewStudyPlanView
+							setIsEmpty={setIsEmpty}
+							setIsFullTime={setIsFullTime}
 						/>
 					)}
 				</Row>
