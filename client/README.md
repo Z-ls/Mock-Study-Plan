@@ -1,70 +1,16 @@
-# Getting Started with Create React App
+# Exam #1 Study Plan / Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+The front-end components of the web application "Study Plan" is developed using React.js and other assistant modules (see `package.json`), which is set to running on `http://localhost:3000`<br/>
 
-In the project directory, you can run:
+The default route will lead the user to the view for unauthorized users, in which where only the `list of all available courses` fetched from the backend server will be visible to the user. At this stage, **all the users is able to check on corresponding information/descriptions of all the available courses.** The **navbar** will be visible in company with the list and will guide the user to complete the logging-in process with student number `matricola` and `password`.
 
-### `npm start`
+After successfully logging in, the frontend will try to fetch the existing study plan previously defined by the user. If the list is empty the view will ask the user to define a new study plan by indicating whether the study plan is of `full time` or not. **By choose one of the options, or upon successfully fetched from the backend, the corresponding** `list of selected courses` **becomes visible.**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Once the list of selected courses is visible, the user is free to make the following operations:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-   The user can continue to **expand/contract descriptions for courses** from the `available courses' list`.
+-   The user can add a course by **clicking on the expanded row of corresponding course** after confirming in that row that there is no violations of constraints from adding this course.
+-   The user can **click on any course in the** `selected courses' list` **to remove the it from the list** when there is no violations of preparatory constraints.
+-   Upon any adding/removing the `selected courses' list`

@@ -1,25 +1,35 @@
-import { Row, Col, ListGroup, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import { Row, Col, ListGroup, Button, Badge, Modal } from 'react-bootstrap';
 const listFunctions = require('./models/SelectedCourses');
 
 export function SelectedCoursesList(props) {
-	const [isFullTime, setIsFullTime] = useState(true);
 	const [currCredits, setCurrCredits] = useState(0);
 	const [isValid, setIsValid] = useState(false);
 	const [hasSent, setHasSent] = useState(false);
 
-	let minCredits = isFullTime ? 60 : 20;
-	let maxCredits = isFullTime ? 80 : 40;
+	const minCredits = props.isFullTime ? 60 : 20;
+	const maxCredits = props.isFullTime ? 80 : 40;
+
+	// useEffect(() => {
+	// 	if (props.hasLoggedIn) {
+	// 		listFunctions.fetchSelectedCourses(
+	// 			props.setSelectedCoursesList,
+	// 			props.setIsFullTime,
+	// 			props.setIsEmpty,
+	// 			props.matricola
+	// 		);
+	// 	}
+	// }, [
+	// 	props.hasLoggedIn,
+	// 	props.matricola,
+	// 	props.setSelectedCoursesList,
+	// 	props.setIsFullTime,
+	// 	props.setIsEmpty
+	// ]);
 
 	useEffect(() => {
-		listFunctions.fetchSelectedCourses(
-			props.setSelectedCoursesList,
-			props.matricola
-		);
+		setHasSent(false);
 		listFunctions.triggerModification(props.setModification);
-	}, [props.matricola]);
-
-	useEffect(() => {
 		const isCreditValid = listFunctions.checkCredits(
 			props.selectedCoursesList,
 			setCurrCredits,
@@ -27,19 +37,29 @@ export function SelectedCoursesList(props) {
 			minCredits
 		);
 		setIsValid(isCreditValid);
-	}, [setCurrCredits, maxCredits, minCredits, props.selectedCoursesList]);
+	}, [
+		props.setModification,
+		setHasSent,
+		setCurrCredits,
+		maxCredits,
+		minCredits,
+		props.selectedCoursesList
+	]);
 
 	return (
-		<ListGroup id='selList'>
+		<ListGroup style={props.hasLoggedIn ? { overflow: 'auto' } : {}}>
 			<ListActions
 				isValid={isValid}
+				isFullTime={props.isFullTime}
+				selectedCoursesList={props.selectedCoursesList}
 				setIsValid={setIsValid}
+				setIsFullTime={props.setIsFullTime}
 				setCurrCredits={setCurrCredits}
 				setSelectedCoursesList={props.setSelectedCoursesList}
+				setIsEmpty={props.setIsEmpty}
 				matricola={props.matricola}
 				hasSent={hasSent}
 				setHasSent={setHasSent}
-				setModification={props.setModification}
 			/>
 			<RowCredits
 				hasSent={hasSent}
@@ -48,7 +68,9 @@ export function SelectedCoursesList(props) {
 				currCredits={currCredits}
 				maxCredits={maxCredits}
 			/>
-			<ListGroup.Item className='d-none d-xl-block'>
+			<ListGroup.Item
+				className='d-none d-xl-block'
+				id='selList'>
 				<Row>
 					<Col lg={1}>Code</Col>
 					<Col lg={6}>Name</Col>
@@ -61,15 +83,15 @@ export function SelectedCoursesList(props) {
 				minCredits={minCredits}
 				maxCredits={maxCredits}
 				isValid={isValid}
-				hasSent={hasSent}
-				setHasSent={setHasSent}
-				setModification={props.setModification}
 			/>
 		</ListGroup>
 	);
 }
 
 function ListActions(props) {
+	const [showDialog, setShowDialog] = useState(false);
+	const [deleteConfirm, setDeleteConfirm] = useState(false);
+
 	return (
 		<ListGroup.Item className='d-none d-xl-block'>
 			<Row className='d-flex justify-content-around'>
@@ -79,10 +101,9 @@ function ListActions(props) {
 						disabled={!props.isValid}
 						onClick={() => {
 							listFunctions.updateSelectedCourses(
-								props.matricola
-							);
-							listFunctions.triggerModification(
-								props.setModification
+								props.matricola,
+								props.isFullTime,
+								props.selectedCoursesList
 							);
 							props.setHasSent(true);
 						}}>
@@ -91,17 +112,87 @@ function ListActions(props) {
 				</Col>
 				<Col className='d-flex justify-content-end'>
 					<Button
+						className='ms-1'
 						variant='light'
 						onClick={() => {
-							props.setSelectedCoursesList([]);
-							props.setIsValid(false);
-							props.setHasSent(false);
-							listFunctions.triggerModification(
-								props.setModification
+							listFunctions.fetchSelectedCourses(
+								props.setSelectedCoursesList,
+								props.setIsFullTime,
+								props.setIsEmpty,
+								props.matricola
 							);
+							props.setHasSent(false);
 						}}>
 						CANCEL
 					</Button>
+					<Button
+						className='ms-1'
+						variant='warning'
+						onClick={() => {
+							props.setSelectedCoursesList([]);
+							props.setHasSent(false);
+							props.setIsValid(false);
+						}}>
+						CLEAR
+					</Button>
+					<Button
+						className='ms-1'
+						variant='danger'
+						onClick={() => {
+							if (deleteConfirm) {
+								props.setSelectedCoursesList([]);
+								props.setIsValid(false);
+								listFunctions.updateSelectedCourses(
+									props.matricola,
+									undefined,
+									props.selectedCoursesList
+								);
+							} else setShowDialog(true);
+							setDeleteConfirm(false);
+							props.setHasSent(true);
+						}}>
+						DELETE
+					</Button>
+					<Modal
+						show={showDialog}
+						onHide={() => setShowDialog(false)}
+						size='lg'
+						backdrop='static'
+						centered>
+						<Modal.Header closeButton>
+							<Modal.Title>
+								This operation is irreversible!
+							</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Row className='text-danger d-flex justify-content-center'>
+								This operation will delete the current study
+								plan from both the client AND the server.
+							</Row>
+							<Row className='text-danger d-flex justify-content-center'>
+								Are you sure about this?
+							</Row>
+							<Row className='text d-flex justify-content-center'>
+								After confirmation, you can click the delete
+								button again to take effect the deletion.
+							</Row>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button
+								variant='success'
+								onClick={() => {
+									setDeleteConfirm(true);
+									setShowDialog(false);
+								}}>
+								I know what I am doing
+							</Button>
+							<Button
+								variant='light'
+								onClick={() => setShowDialog(false)}>
+								Close
+							</Button>
+						</Modal.Footer>
+					</Modal>
 				</Col>
 			</Row>
 		</ListGroup.Item>
@@ -131,25 +222,28 @@ function RowCredits(props) {
 }
 
 function ListContent(props) {
-	return props.selectedCoursesList.map((course) => (
+	return props.selectedCoursesList.map(course => (
 		<ListRow
 			key={'sel_' + course.code}
 			isValid={props.isValid}
 			selectedCoursesList={props.selectedCoursesList}
 			setSelectedCoursesList={props.setSelectedCoursesList}
 			hasSent={props.hasSent}
-			setHasSent={props.setHasSent}
 			course={course}
-			setModification={props.setModification}
 		/>
 	));
 }
 
 function ListRow(props) {
+	const hasPreparatory = listFunctions.checkPreparatory(
+		props.course.code,
+		props.selectedCoursesList
+	);
 	return (
 		<ListGroup.Item
 			action
 			key={props.course.code}
+			disabled={!hasPreparatory}
 			variant={() => {
 				listFunctions.changeListVariant(props.isValid, props.hasSent);
 			}}
@@ -162,16 +256,26 @@ function ListRow(props) {
 				) {
 					listFunctions.removeSelectedCourse(
 						props.course.code,
-						props.selectedCoursesList,
 						props.setSelectedCoursesList
 					);
-					props.setHasSent(false);
-					listFunctions.triggerModification(props.setModification);
 				}
 			}}>
 			<Row>
 				<Col lg={1}>{props.course.code}</Col>
 				<Col lg={6}>{props.course.name}</Col>
+				{!hasPreparatory && (
+					<Col lv={2}>
+						<Badge bg='warning'>
+							Required By <></>
+							{
+								listFunctions.findPreparatory(
+									props.course.code,
+									props.selectedCoursesList
+								).code
+							}
+						</Badge>
+					</Col>
+				)}
 			</Row>
 		</ListGroup.Item>
 	);

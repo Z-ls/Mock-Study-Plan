@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container, Row, Col, Form, Navbar, Button } from 'react-bootstrap';
-import { getUserInfo, logIn, logOut } from '../API';
+import { logIn, logOut } from '../API';
 
 export function AuthNavBar(props) {
 	const [id, setId] = useState('');
 	const [password, setPassword] = useState('');
-
-	useEffect(() => {
-		checkAuth(props.setUser, props.setHasLoggedIn);
-	}, [props.setUser, props.setHasLoggedIn]);
 
 	return (
 		<Navbar bg={props.hasLoggedIn ? 'success' : 'dark'}>
@@ -52,7 +48,7 @@ function LoginForm(props) {
 					value={props.id}
 					placeholder='matricola'
 					type='text'
-					onChange={(event) => props.setId(event.target.value)}
+					onChange={event => props.setId(event.target.value)}
 					required={true}
 				/>
 			</Col>
@@ -63,7 +59,7 @@ function LoginForm(props) {
 					value={props.password}
 					placeholder='password'
 					type='password'
-					onChange={(event) => props.setPassword(event.target.value)}
+					onChange={event => props.setPassword(event.target.value)}
 					required={true}
 					minLength={6}
 				/>
@@ -79,8 +75,8 @@ function LoginForm(props) {
 				<Button
 					variant='warning'
 					onClick={() => {
-						props.setId(undefined);
-						props.setPassword(undefined);
+						props.setId('');
+						props.setPassword('');
 					}}>
 					CLEAR
 				</Button>
@@ -99,21 +95,15 @@ function WelcomeMessage(props) {
 			<Col className='d-inline justify-content-end align-items-center'>
 				<Button
 					variant='dark'
-					onClick={() =>
-						handleLogout(props.setHasLoggedIn, props.setUser)
-					}>
+					onClick={() => {
+						handleLogout(props.setHasLoggedIn, props.setUser);
+					}}>
 					LOGOUT
 				</Button>
 			</Col>
 		</Row>
 	);
 }
-
-const checkAuth = async (setUser, setHasLoggedIn) => {
-	const user = await getUserInfo();
-	setUser(user);
-	setHasLoggedIn(true);
-};
 
 const handleLogin = async (credentials, setHasLoggedIn, setUser) => {
 	try {
