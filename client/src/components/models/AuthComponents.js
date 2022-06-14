@@ -1,10 +1,10 @@
-import { logIn, logOut } from '../../API';
+import { logIn, logOut, getUserInfo } from '../../API';
 
 export async function handleLogin(credentials, setHasLoggedIn, setUser) {
 	try {
 		const user = await logIn(credentials);
-		setHasLoggedIn(true);
-		setUser(user);
+		setUser(() => user);
+		setHasLoggedIn(() => true);
 	} catch (err) {
 		throw err;
 	}
@@ -12,6 +12,12 @@ export async function handleLogin(credentials, setHasLoggedIn, setUser) {
 
 export const handleLogout = async (setHasLoggedIn, setUser) => {
 	await logOut();
-	setHasLoggedIn(false);
-	setUser(undefined);
+	setUser(() => null);
+	setHasLoggedIn(() => false);
+};
+
+export const checkAuth = async (setUser, setHasLoggedIn) => {
+	const user = await getUserInfo();
+	setUser(() => user);
+	setHasLoggedIn(() => true);
 };

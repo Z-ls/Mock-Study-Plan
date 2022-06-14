@@ -1,17 +1,17 @@
 const API = require('../../API');
 
-export const fetchAvailableCourses = async (setAvailableCoursesList) => {
+export const fetchAvailableCourses = async setAvailableCoursesList => {
 	const list = await API.getAllCourses();
 	setAvailableCoursesList(() => list);
 };
 
 export const setAvailableCoursesStatus = (
-	availableCoursesList,
 	setAvailableCoursesList,
 	selectedCoursesList
 ) => {
-	setAvailableCoursesList(() =>
-		availableCoursesList.map((availableCourse) => {
+	setAvailableCoursesList(availableCoursesList =>
+		availableCoursesList.map(availableCourseOriginal => {
+			let availableCourse = Object.create(availableCourseOriginal);
 			availableCourse.isFullyBooked = false;
 			availableCourse.isTaken = false;
 			availableCourse.hasConflicts = false;
@@ -20,25 +20,27 @@ export const setAvailableCoursesStatus = (
 				!availableCourse.preparatoryCourseCode;
 			if (availableCourse.currStudents === availableCourse.maxStudents)
 				availableCourse.isFullyBooked = true;
-			selectedCoursesList.forEach((selectedCourse) => {
-				if (selectedCourse.code === availableCourse.code) {
-					availableCourse.isTaken = true;
-				}
-				if (
-					selectedCourse.incompatibleCodes.includes(
-						availableCourse.code
-					)
-				) {
-					availableCourse.hasConflicts = true;
-					availableCourse.conflictsList.push(selectedCourse.code);
-				}
-				if (
-					selectedCourse.code ===
-					availableCourse.preparatoryCourseCode
-				) {
-					availableCourse.hasPreparatory = true;
-				}
-			});
+			selectedCoursesList
+				.map(course => course.code)
+				.forEach(selectedCourseCode => {
+					if (availableCourse.code === selectedCourseCode) {
+						availableCourse.isTaken = true;
+					}
+					if (
+						availableCourse.incompatibleCodes.includes(
+							selectedCourseCode
+						)
+					) {
+						availableCourse.hasConflicts = true;
+						availableCourse.conflictsList.push(selectedCourseCode);
+					}
+					if (
+						availableCourse.preparatoryCourseCode ===
+						selectedCourseCode
+					) {
+						availableCourse.hasPreparatory = true;
+					}
+				});
 			return availableCourse;
 		})
 	);

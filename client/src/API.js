@@ -8,7 +8,7 @@ export const getAllCourses = async () => {
 	if (res.ok) {
 		return courses
 			.map(
-				(course) =>
+				course =>
 					new Course(
 						course.code,
 						course.name,
@@ -25,7 +25,7 @@ export const getAllCourses = async () => {
 	} else throw courses;
 };
 
-export const getCourseByCode = async (code) => {
+export const getCourseByCode = async code => {
 	const res = await fetch(SERVER_URL + `/api/courses/${code}`);
 	const course = await res.json();
 	if (res.ok) {
@@ -42,26 +42,33 @@ export const getCourseByCode = async (code) => {
 	else throw course;
 };
 
-export const getSelectedCourses = async (id) => {
+export const getSelectedCourses = async id => {
 	const res = await fetch(SERVER_URL + `/api/studyPlans/${id}`);
 	const courses = await res.json();
 	if (res.ok) {
-		return Promise.all(
-			courses.split(',').map((code) => getCourseByCode(code))
+		const listArr = courses.split(',');
+		const isFullTime = listArr[0];
+		listArr.splice(0, 1);
+		const list = await Promise.all(
+			listArr.map(code => getCourseByCode(code))
 		);
-	} else {
-		if (res.status === 404) return [];
-		else throw courses;
+		console.log('isFullTime', isFullTime);
+		return { list: list, isFullTime: isFullTime };
 	}
+	if (res.status === 404) return [];
+	else throw courses;
 };
 
-export const updateStudyPlan = async (id, courses) => {
-	const courseList = courses.map((course) => course.code);
+export const updateStudyPlan = async (id, isFullTime, courses) => {
+	const is_full_time = Array.from(isFullTime, isFullTime =>
+		isFullTime ? (isFullTime === true ? 1 : 0) : ''
+	);
+	const nList = is_full_time.concat(courses.map(course => course.code));
 	const res = await fetch(SERVER_URL + `/api/studyPlans/${id}`, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',
-		body: JSON.stringify(courseList),
+		body: JSON.stringify(nList)
 	});
 
 	if (!res.ok) {
@@ -69,12 +76,12 @@ export const updateStudyPlan = async (id, courses) => {
 	}
 };
 
-export const logIn = async (credentials) => {
+export const logIn = async credentials => {
 	const res = await fetch(SERVER_URL + '/api/sessions', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',
-		body: JSON.stringify(credentials),
+		body: JSON.stringify(credentials)
 	});
 	const user = await res.json();
 	if (res.ok) {
@@ -86,7 +93,7 @@ export const logIn = async (credentials) => {
 
 export const getUserInfo = async () => {
 	const res = await fetch(SERVER_URL + '/api/sessions/current', {
-		credentials: 'include',
+		credentials: 'include'
 	});
 	const user = await res.json();
 	if (res.ok) {
@@ -99,7 +106,7 @@ export const getUserInfo = async () => {
 export const logOut = async () => {
 	const res = await fetch(SERVER_URL + '/api/sessions/current', {
 		method: 'DELETE',
-		credentials: 'include',
+		credentials: 'include'
 	});
 	if (res.ok) return null;
 };

@@ -1,5 +1,4 @@
-#availList,
-#selList {
+#availList-auth {
 	overflow: auto;
 	max-height: 400px;
 }

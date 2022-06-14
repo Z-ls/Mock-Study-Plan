@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS "Study_Plans";
 CREATE TABLE "Study_Plans" (
-	"matricola"	INTEGER NOT NULL UNIQUE,
-	"courses"	TEXT
+	"matricola"	TEXT NOT NULL UNIQUE,
+	"courses"	TEXT,
+	PRIMARY KEY("matricola"),
+	FOREIGN KEY("matricola") REFERENCES "Users"("matricola")
 );
 DROP TABLE IF EXISTS "Courses";
 CREATE TABLE "Courses" (
@@ -20,7 +22,7 @@ CREATE TABLE "Users" (
 	"matricola"	TEXT NOT NULL UNIQUE,
 	"first_name" TEXT NOT NULL,
 	"last_name" TEXT NOT NULL,
-	"password"	TEXT NOT NULL,
+	"hex"	TEXT NOT NULL,
 	"salt"	TEXT NOT NULL,
 	PRIMARY KEY("matricola")
 );
@@ -55,5 +57,8 @@ VALUES
 ("01OUZPD","Model based software design",4,0,null,null,null),
 ("01URSPD","Internet Video Streaming",6,0,2,null,null);
 
-INSERT INTO Users(matricola, first_name, last_name, password, salt) VALUES ("123456", "Mario", "Rossi", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
-INSERT INTO Study_Plans(matricola, courses) VALUES (123456, "01OUZPD,03UEWOV,01TYDOV,01SQOOV,01NYHOV,02KPNOV,01URROV,01URSPD");
+INSERT INTO Users(matricola, first_name, last_name, hex, salt) VALUES 
+("s123456", "Mario", "Rossi", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s987654", "John", "Doe", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
+INSERT INTO Study_Plans(matricola, courses) VALUES ("s123456", "1,01OUZPD,03UEWOV,01TYDOV,01SQOOV,01NYHOV,02KPNOV,01URROV,01URSPD"),
+("s987654", "");
