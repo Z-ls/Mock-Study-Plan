@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { AvailableCoursesList } from './AvailableCoursesList';
 import { SelectedCoursesList } from './SelectedCoursesList';
 import { fetchSelectedCourses } from './models/SelectedCourses';
+import { setAvailableCoursesStatus } from './models/AvailableCourses';
 // Structural Import
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { AuthNavBar } from './AuthNavBar';
@@ -51,8 +52,8 @@ export function UnauthenticatedUserView(props) {
 export function SelectedCoursesView(props) {
 	const navigate = useNavigate();
 	const pState = props.viewStatesAndHooks;
-	const [isEmpty, setIsEmpty] = useState(undefined);
-	const [isFullTime, setIsFullTime] = useState(false);
+	// const [isEmpty, setIsEmpty] = useState(undefined);
+	// const [isFullTime, setIsFullTime] = useState(false);
 
 	useEffect(() => {
 		if (!pState.hasLoggedIn) {
@@ -60,85 +61,21 @@ export function SelectedCoursesView(props) {
 		}
 	}, [pState.hasLoggedIn, navigate]);
 
-	useEffect(() => {
-		if (pState.hasLoggedIn) {
-			fetchSelectedCourses(
-				pState.setSelectedCoursesList,
-				setIsFullTime,
-				setIsEmpty,
-				pState.matricola
-			);
-		}
-	}, [
-		pState.hasLoggedIn,
-		pState.matricola,
-		pState.setSelectedCoursesList,
-		setIsFullTime,
-		setIsEmpty
-	]);
-
 	return (
 		<Container className='d-block justify-content-center'>
 			{pState.hasLoggedIn && (
 				<Row>
-					{isEmpty === false ? (
-						<SelectedCoursesList
-							isEmpty={isEmpty}
-							isFullTime={isFullTime}
-							hasLoggedIn={pState.hasLoggedIn}
-							matricola={pState.user.matricola}
-							availableCoursesList={pState.availableCoursesList}
-							selectedCoursesList={pState.selectedCoursesList}
-							setIsEmpty={setIsEmpty}
-							setIsFullTime={setIsFullTime}
-							setAvailableCoursesList={
-								pState.setAvailableCoursesList
-							}
-							setSelectedCoursesList={
-								pState.setSelectedCoursesList
-							}
-							setModification={pState.setModification}
-						/>
-					) : (
-						<CreateNewStudyPlanView
-							setIsEmpty={setIsEmpty}
-							setIsFullTime={setIsFullTime}
-						/>
-					)}
+					<SelectedCoursesList
+						hasLoggedIn={pState.hasLoggedIn}
+						matricola={pState.user.matricola}
+						availableCoursesList={pState.availableCoursesList}
+						selectedCoursesList={pState.selectedCoursesList}
+						setAvailableCoursesList={pState.setAvailableCoursesList}
+						setSelectedCoursesList={pState.setSelectedCoursesList}
+						setModification={pState.setModification}
+					/>
 				</Row>
 			)}
-		</Container>
-	);
-}
-
-export function CreateNewStudyPlanView(props) {
-	return (
-		<Container fluid>
-			<Container className='d-block justify-content-center'>
-				<Row className='d-flex justify-content-center'>
-					<Col className='d-flex justify-content-center'>
-						<Button
-							className='mx-2'
-							variant='primary'
-							onClick={() => {
-								props.setIsEmpty(() => false);
-								props.setIsFullTime(() => true);
-							}}>
-							Create a Full-Time Study Plan
-						</Button>
-						<Button
-							className='mx-2'
-							variant='primary'
-							onClick={() => {
-								props.setIsEmpty(() => false);
-								props.setIsFullTime(() => false);
-							}}>
-							Create a Part-Time Study Plan
-						</Button>
-					</Col>
-				</Row>
-			</Container>
-			<br />
 		</Container>
 	);
 }

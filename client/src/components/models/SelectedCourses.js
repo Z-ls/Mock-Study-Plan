@@ -7,9 +7,9 @@ export const fetchSelectedCourses = async (
 	matricola
 ) => {
 	const listObj = await getSelectedCourses(matricola);
-	setSelectedCoursesList(() => listObj.list);
-	setIsFullTime(() => !!listObj.isFullTime);
-	setIsEmpty(() => listObj.list.length === 0);
+	setIsFullTime(!!listObj.isFullTime);
+	setIsEmpty(listObj.list.length === 0);
+	setSelectedCoursesList(listObj.list);
 };
 
 export const updateSelectedCourses = async (

@@ -1,31 +1,45 @@
 import { useEffect, useState } from 'react';
-import { Row, Col, ListGroup, Button, Badge, Modal } from 'react-bootstrap';
+import {
+	Container,
+	Row,
+	Col,
+	ListGroup,
+	Button,
+	Badge,
+	Modal
+} from 'react-bootstrap';
 const listFunctions = require('./models/SelectedCourses');
 
 export function SelectedCoursesList(props) {
+	const [isEmpty, setIsEmpty] = useState(undefined);
+	const [isFullTime, setIsFullTime] = useState(false);
 	const [currCredits, setCurrCredits] = useState(0);
 	const [isValid, setIsValid] = useState(false);
 	const [hasSent, setHasSent] = useState(false);
+	const [minCredits, setMinCredits] = useState(undefined);
+	const [maxCredits, setMaxCredits] = useState(undefined);
 
-	const minCredits = props.isFullTime ? 60 : 20;
-	const maxCredits = props.isFullTime ? 80 : 40;
+	useEffect(() => {
+		setMinCredits(isFullTime ? 60 : 20);
+		setMaxCredits(isFullTime ? 80 : 40);
+	}, [isFullTime]);
 
-	// useEffect(() => {
-	// 	if (props.hasLoggedIn) {
-	// 		listFunctions.fetchSelectedCourses(
-	// 			props.setSelectedCoursesList,
-	// 			props.setIsFullTime,
-	// 			props.setIsEmpty,
-	// 			props.matricola
-	// 		);
-	// 	}
-	// }, [
-	// 	props.hasLoggedIn,
-	// 	props.matricola,
-	// 	props.setSelectedCoursesList,
-	// 	props.setIsFullTime,
-	// 	props.setIsEmpty
-	// ]);
+	useEffect(() => {
+		if (props.hasLoggedIn) {
+			listFunctions.fetchSelectedCourses(
+				props.setSelectedCoursesList,
+				setIsFullTime,
+				setIsEmpty,
+				props.matricola
+			);
+		}
+	}, [
+		props.hasLoggedIn,
+		props.matricola,
+		setIsEmpty,
+		props.setSelectedCoursesList,
+		setIsFullTime
+	]);
 
 	useEffect(() => {
 		setHasSent(false);
@@ -47,44 +61,60 @@ export function SelectedCoursesList(props) {
 	]);
 
 	return (
-		<ListGroup style={props.hasLoggedIn ? { overflow: 'auto' } : {}}>
-			<ListActions
-				isValid={isValid}
-				isFullTime={props.isFullTime}
-				selectedCoursesList={props.selectedCoursesList}
-				setIsValid={setIsValid}
-				setIsFullTime={props.setIsFullTime}
-				setCurrCredits={setCurrCredits}
-				setSelectedCoursesList={props.setSelectedCoursesList}
-				setIsEmpty={props.setIsEmpty}
-				matricola={props.matricola}
-				hasSent={hasSent}
-				setHasSent={setHasSent}
-			/>
-			<RowCredits
-				hasSent={hasSent}
-				isValid={isValid}
-				minCredits={minCredits}
-				currCredits={currCredits}
-				maxCredits={maxCredits}
-			/>
-			<ListGroup.Item
-				className='d-none d-xl-block'
-				id='selList'>
-				<Row>
-					<Col lg={1}>Code</Col>
-					<Col lg={6}>Name</Col>
-				</Row>
-			</ListGroup.Item>
-			<ListContent
-				selectedCoursesList={props.selectedCoursesList}
-				setSelectedCoursesList={props.setSelectedCoursesList}
-				setCurrCredits={setCurrCredits}
-				minCredits={minCredits}
-				maxCredits={maxCredits}
-				isValid={isValid}
-			/>
-		</ListGroup>
+		<Container fluid>
+			<ListGroup>
+				{isEmpty ? (
+					<CreateNewStudyPlanRow
+						setIsEmpty={setIsEmpty}
+						setIsFullTime={setIsFullTime}
+					/>
+				) : (
+					<ListActions
+						isValid={isValid}
+						isFullTime={isFullTime}
+						selectedCoursesList={props.selectedCoursesList}
+						setIsValid={setIsValid}
+						setIsFullTime={setIsFullTime}
+						setCurrCredits={setCurrCredits}
+						setSelectedCoursesList={props.setSelectedCoursesList}
+						setIsEmpty={setIsEmpty}
+						matricola={props.matricola}
+						hasSent={hasSent}
+						setHasSent={setHasSent}
+					/>
+				)}
+				<RowCredits
+					hasSent={hasSent}
+					isValid={isValid}
+					minCredits={minCredits}
+					currCredits={currCredits}
+					maxCredits={maxCredits}
+				/>
+				<ListGroup.Item
+					className='d-none d-xl-block'
+					id='selList'>
+					<Row>
+						<Col lg={1}>Code</Col>
+						<Col lg={6}>Name</Col>
+					</Row>
+				</ListGroup.Item>
+			</ListGroup>
+			<ListGroup
+				style={
+					props.hasLoggedIn
+						? { overflow: 'auto', maxHeight: '300px' }
+						: {}
+				}>
+				<ListContent
+					selectedCoursesList={props.selectedCoursesList}
+					setSelectedCoursesList={props.setSelectedCoursesList}
+					setCurrCredits={setCurrCredits}
+					minCredits={minCredits}
+					maxCredits={maxCredits}
+					isValid={isValid}
+				/>
+			</ListGroup>
+		</Container>
 	);
 }
 
@@ -93,7 +123,7 @@ function ListActions(props) {
 	const [deleteConfirm, setDeleteConfirm] = useState(false);
 
 	return (
-		<ListGroup.Item className='d-none d-xl-block'>
+		<ListGroup.Item>
 			<Row className='d-flex justify-content-around'>
 				<Col className='d-flex justify-content-start'>
 					<Button
@@ -121,7 +151,7 @@ function ListActions(props) {
 								props.setIsEmpty,
 								props.matricola
 							);
-							props.setHasSent(false);
+							props.setHasSent(() => false);
 						}}>
 						CANCEL
 					</Button>
@@ -130,8 +160,8 @@ function ListActions(props) {
 						variant='warning'
 						onClick={() => {
 							props.setSelectedCoursesList([]);
-							props.setHasSent(false);
-							props.setIsValid(false);
+							props.setHasSent(() => false);
+							props.setIsValid(() => false);
 						}}>
 						CLEAR
 					</Button>
@@ -140,22 +170,22 @@ function ListActions(props) {
 						variant='danger'
 						onClick={() => {
 							if (deleteConfirm) {
-								props.setSelectedCoursesList([]);
-								props.setIsValid(false);
+								props.setSelectedCoursesList(() => []);
+								props.setIsValid(() => false);
 								listFunctions.updateSelectedCourses(
 									props.matricola,
 									undefined,
 									props.selectedCoursesList
 								);
-							} else setShowDialog(true);
-							setDeleteConfirm(false);
-							props.setHasSent(true);
+							} else setShowDialog(() => true);
+							setDeleteConfirm(() => false);
+							props.setHasSent(() => true);
 						}}>
 						DELETE
 					</Button>
 					<Modal
 						show={showDialog}
-						onHide={() => setShowDialog(false)}
+						onHide={() => setShowDialog(() => false)}
 						size='lg'
 						backdrop='static'
 						centered>
@@ -208,13 +238,22 @@ function RowCredits(props) {
 			)}>
 			<Row>
 				<Col className='d-flex justify-content-start'>
-					Min Credits: {props.minCredits}
+					Min Credits:{' '}
+					{props.minCredits
+						? props.minCredits
+						: ' Please choose a Study Plan'}
 				</Col>
 				<Col className='d-flex justify-content-center'>
-					Current Credits: {props.currCredits}
+					Current Credits:{' '}
+					{props.currCredits
+						? props.currCredits
+						: ' Please choose a Study Plan'}
 				</Col>
 				<Col className='d-flex justify-content-end'>
-					Max Credits: {props.maxCredits}
+					Max Credits:{' '}
+					{props.maxCredits
+						? props.maxCredits
+						: ' Please choose a Study Plan'}
 				</Col>
 			</Row>
 		</ListGroup.Item>
@@ -276,6 +315,35 @@ function ListRow(props) {
 						</Badge>
 					</Col>
 				)}
+			</Row>
+		</ListGroup.Item>
+	);
+}
+
+export function CreateNewStudyPlanRow(props) {
+	return (
+		<ListGroup.Item>
+			<Row className='d-flex justify-content-center'>
+				<Col className='d-flex justify-content-center'>
+					<Button
+						className='mx-2'
+						variant='primary'
+						onClick={() => {
+							props.setIsEmpty(false);
+							props.setIsFullTime(true);
+						}}>
+						Create a Full-Time Study Plan
+					</Button>
+					<Button
+						className='mx-2'
+						variant='primary'
+						onClick={() => {
+							props.setIsEmpty(false);
+							props.setIsFullTime(false);
+						}}>
+						Create a Part-Time Study Plan
+					</Button>
+				</Col>
 			</Row>
 		</ListGroup.Item>
 	);

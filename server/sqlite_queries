@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS "Study_Plans";
 CREATE TABLE "Study_Plans" (
 	"matricola"	TEXT NOT NULL UNIQUE,
+	"is_full_time" INTEGER,
 	"courses"	TEXT,
 	PRIMARY KEY("matricola"),
 	FOREIGN KEY("matricola") REFERENCES "Users"("matricola")
@@ -60,5 +61,5 @@ VALUES
 INSERT INTO Users(matricola, first_name, last_name, hex, salt) VALUES 
 ("s123456", "Mario", "Rossi", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
 ("s987654", "John", "Doe", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
-INSERT INTO Study_Plans(matricola, courses) VALUES ("s123456", "1,01OUZPD,03UEWOV,01TYDOV,01SQOOV,01NYHOV,02KPNOV,01URROV,01URSPD"),
-("s987654", "");
+INSERT INTO Study_Plans(matricola, is_full_time, courses) VALUES ("s123456", 1, "01OUZPD,03UEWOV,01TYDOV,01SQOOV,01NYHOV,02KPNOV,01URROV,01URSPD"),
+("s987654", null, "");

@@ -1,4 +1,4 @@
-import { Row, Col, ListGroup, Badge } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup, Badge } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { addSelectedCourse } from './models/SelectedCourses';
 import {
@@ -12,14 +12,15 @@ export function AvailableCoursesList(props) {
 	}, [props.setAvailableCoursesList, props.hasLoggedIn]);
 
 	useEffect(() => {
-		setAvailableCoursesStatus(
-			props.setAvailableCoursesList,
-			props.selectedCoursesList
-		);
-	}, [props.selectedCoursesList]);
+		if (props.selectedCoursesList)
+			setAvailableCoursesStatus(
+				props.setAvailableCoursesList,
+				props.selectedCoursesList
+			);
+	}, [props.selectedCoursesList, props.setAvailableCoursesList]);
 
 	return (
-		<ListGroup style={props.hasLoggedIn ? { overflow: 'auto' } : {}}>
+		<Container fluid>
 			<ListGroup.Item className='d-none d-xl-block'>
 				<Row className='d-flex align-items-center justify-content-evenly'>
 					<Col lg={2}>Code</Col>
@@ -29,14 +30,21 @@ export function AvailableCoursesList(props) {
 					<Col lg={1}>Max Students</Col>
 				</Row>
 			</ListGroup.Item>
-			<ListContent
-				hasLoggedIn={props.hasLoggedIn}
-				availableCoursesList={props.availableCoursesList}
-				selectedCoursesList={props.selectedCoursesList}
-				setSelectedCoursesList={props.setSelectedCoursesList}
-				setModification={props.setModification}
-			/>
-		</ListGroup>
+			<ListGroup
+				style={
+					props.hasLoggedIn
+						? { overflow: 'auto', maxHeight: '300px' }
+						: {}
+				}>
+				<ListContent
+					hasLoggedIn={props.hasLoggedIn}
+					availableCoursesList={props.availableCoursesList}
+					selectedCoursesList={props.selectedCoursesList}
+					setSelectedCoursesList={props.setSelectedCoursesList}
+					setModification={props.setModification}
+				/>
+			</ListGroup>
+		</Container>
 	);
 }
 
@@ -117,6 +125,10 @@ function ListRowStatus(props) {
 						<div className='text-muted'>Please Login first</div>
 					) : props.course.isTaken ? (
 						<div className='text-muted'>Course Added</div>
+					) : props.course.isFullyBooked ? (
+						<div className='text-muted'>
+							The course is Fully Booked...Please try later
+						</div>
 					) : props.addable ? (
 						<div className='text'>
 							Click the row to add{' '}

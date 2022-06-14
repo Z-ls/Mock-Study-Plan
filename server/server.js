@@ -115,12 +115,34 @@ app.get('/api/courses/:code', async (req, res) => {
 	);
 });
 
-app.get('/api/studyPlans/:id', async (req, res) => {
-	return await studyPlanDAO.getStudyPlanById(req.params.id).then(
+app.put('/api/courses/book/:code', async (req, res) => {
+	return await coursesDAO.bookACourseByCode(req.params.code).then(
+		ret => {
+			return ret ? res.status(200).end() : res.status(404).end();
+		},
+		err => {
+			return res.status(503).send(err);
+		}
+	);
+});
+
+app.put('/api/courses/unBook/:code', async (req, res) => {
+	return await coursesDAO.unBookACourseByCode(req.params.code).then(
+		ret => {
+			return ret ? res.status(200).end() : res.status(404).end();
+		},
+		err => {
+			return res.status(503).send(err);
+		}
+	);
+});
+
+app.get('/api/studyPlans/:matricola', async (req, res) => {
+	return await studyPlanDAO.getStudyPlanById(req.params.matricola).then(
 		studyPlan => {
 			return studyPlan
-				? res.status(200).json(studyPlan.courses)
-				: res.status(404).send('Study Plan not found');
+				? res.status(200).json(studyPlan)
+				: res.status(404).send();
 		},
 		err => {
 			return res.status(500).send(err);
@@ -128,8 +150,25 @@ app.get('/api/studyPlans/:id', async (req, res) => {
 	);
 });
 
-app.put('/api/studyPlans/:id', async (req, res) => {
-	return await studyPlanDAO.updateStudyPlan(req.params.id, req.body).then(
+app.put('/api/studyPlans/:matricola', async (req, res) => {
+	return await studyPlanDAO
+		.updateStudyPlan(
+			req.params.matricola,
+			req.body.isFullTime,
+			req.body.courses
+		)
+		.then(
+			() => {
+				return res.status(201).end();
+			},
+			err => {
+				return res.status(503).json(err);
+			}
+		);
+});
+
+app.put('/api/studyPlans/:matricola/delete', async (req, res) => {
+	return await studyPlanDAO.updateStudyPlan(req.params.matricola).then(
 		() => {
 			return res.status(201).end();
 		},

@@ -38,39 +38,86 @@ export const getCourseByCode = async code => {
 			course.incompatible_list,
 			course.preparatory_course
 		);
-	} else if (res.status === 404) return null;
+	} else if (res.status === 404) return undefined;
 	else throw course;
 };
 
-export const getSelectedCourses = async id => {
-	const res = await fetch(SERVER_URL + `/api/studyPlans/${id}`);
-	const courses = await res.json();
+export const getSelectedCourses = async matricola => {
+	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`);
+	const courseJson = await res.json();
 	if (res.ok) {
-		const listArr = courses.split(',');
-		const isFullTime = listArr[0];
-		listArr.splice(0, 1);
+		const isFullTime = courseJson.is_full_time;
 		const list = await Promise.all(
-			listArr.map(code => getCourseByCode(code))
+			courseJson.courses.split(',').map(code => getCourseByCode(code))
 		);
-		console.log('isFullTime', isFullTime);
-		return { list: list, isFullTime: isFullTime };
+		if (list.includes(undefined)) list = [];
+		return { list, isFullTime };
 	}
 	if (res.status === 404) return [];
-	else throw courses;
+	else throw courseJson;
 };
 
-export const updateStudyPlan = async (id, isFullTime, courses) => {
-	const is_full_time = Array.from(isFullTime, isFullTime =>
-		isFullTime ? (isFullTime === true ? 1 : 0) : ''
+export const bookASingleCourse = async code => {
+	const res = await fetch(SERVER_URL + `/api/courses/book/` + code, {
+		method: 'PUT',
+		credentials: 'include'
+	});
+	return res.ok;
+};
+
+export const unBookASingleCourse = async code => {
+	const res = await fetch(SERVER_URL + `/api/courses/unBook/` + code, {
+		method: 'PUT',
+		credentials: 'include'
+	});
+	return res.ok;
+};
+
+export const deleteStudyPlan = async matricola => {
+	const res = await fetch(SERVER_URL + `/api/studyPlan/${matricola}/delete`, {
+		method: 'PUT',
+		credentials: 'include'
+	});
+	return res.ok;
+};
+
+export const updateStudyPlan = async (matricola, isFullTime, courses) => {
+	const originalList = await getSelectedCourses(matricola).list.then(ret =>
+		ret.map(course => course.code)
 	);
-	const nList = is_full_time.concat(courses.map(course => course.code));
-	const res = await fetch(SERVER_URL + `/api/studyPlans/${id}`, {
+	const newList = courses.map(course => course.code);
+	await Promise.all(
+		originalList.forEach(async code => {
+			await unBookASingleCourse(code).then(
+				res => {
+					if (!res) throw new Error('Un-booking Course Not Found!');
+				},
+				err => {
+					throw err;
+				}
+			);
+		})
+	);
+	if (!(await deleteStudyPlan(matricola)))
+		throw new Error('Deleting current study plan failed.');
+	await Promise.all(
+		newList.forEach(async code => {
+			await bookASingleCourse(code).then(
+				res => {
+					if (!res) throw new Error('Booking Course Not Found!');
+				},
+				err => {
+					throw err;
+				}
+			);
+		})
+	);
+	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',
-		body: JSON.stringify(nList)
+		body: JSON.stringify({ isFullTime: isFullTime, courses: newList })
 	});
-
 	if (!res.ok) {
 		throw await res.json();
 	}
