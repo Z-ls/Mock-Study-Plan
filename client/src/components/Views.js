@@ -1,10 +1,8 @@
 // Functional Import
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { AvailableCoursesList } from './AvailableCoursesList';
 import { SelectedCoursesList } from './SelectedCoursesList';
-import { fetchSelectedCourses } from './models/SelectedCourses';
-import { setAvailableCoursesStatus } from './models/AvailableCourses';
 // Structural Import
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { AuthNavBar } from './AuthNavBar';
@@ -34,6 +32,7 @@ export function UnauthenticatedUserView(props) {
 						hasLoggedIn={pState.hasLoggedIn}
 						availableCoursesList={pState.availableCoursesList}
 						selectedCoursesList={pState.selectedCoursesList}
+						modification={pState.modification}
 						setAvailableCoursesList={pState.setAvailableCoursesList}
 						setSelectedCoursesList={pState.setSelectedCoursesList}
 						setModification={pState.setModification}
@@ -52,8 +51,6 @@ export function UnauthenticatedUserView(props) {
 export function SelectedCoursesView(props) {
 	const navigate = useNavigate();
 	const pState = props.viewStatesAndHooks;
-	// const [isEmpty, setIsEmpty] = useState(undefined);
-	// const [isFullTime, setIsFullTime] = useState(false);
 
 	useEffect(() => {
 		if (!pState.hasLoggedIn) {

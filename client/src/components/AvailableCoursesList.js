@@ -17,7 +17,11 @@ export function AvailableCoursesList(props) {
 				props.setAvailableCoursesList,
 				props.selectedCoursesList
 			);
-	}, [props.selectedCoursesList, props.setAvailableCoursesList]);
+	}, [
+		props.selectedCoursesList,
+		props.setAvailableCoursesList,
+		props.modification
+	]);
 
 	return (
 		<Container fluid>

@@ -26,7 +26,8 @@ export const getAllCourses = async () => {
 };
 
 export const getCourseByCode = async code => {
-	const res = await fetch(SERVER_URL + `/api/courses/${code}`);
+	if (code === '') return undefined;
+	const res = await fetch(SERVER_URL + `/api/course/${code}`);
 	const course = await res.json();
 	if (res.ok) {
 		return new Course(
@@ -47,7 +48,7 @@ export const getSelectedCourses = async matricola => {
 	const courseJson = await res.json();
 	if (res.ok) {
 		const isFullTime = courseJson.is_full_time;
-		const list = await Promise.all(
+		let list = await Promise.all(
 			courseJson.courses.split(',').map(code => getCourseByCode(code))
 		);
 		if (list.includes(undefined)) list = [];
@@ -74,43 +75,33 @@ export const unBookASingleCourse = async code => {
 };
 
 export const deleteStudyPlan = async matricola => {
-	const res = await fetch(SERVER_URL + `/api/studyPlan/${matricola}/delete`, {
-		method: 'PUT',
-		credentials: 'include'
-	});
+	const res = await fetch(
+		SERVER_URL + `/api/studyPlans/${matricola}/delete`,
+		{
+			method: 'PUT',
+			credentials: 'include'
+		}
+	);
 	return res.ok;
 };
 
 export const updateStudyPlan = async (matricola, isFullTime, courses) => {
-	const originalList = await getSelectedCourses(matricola).list.then(ret =>
-		ret.map(course => course.code)
-	);
+	const oldList = await getSelectedCourses(matricola);
+	const originalList = oldList.list.map(course => course.code);
 	const newList = courses.map(course => course.code);
-	await Promise.all(
-		originalList.forEach(async code => {
-			await unBookASingleCourse(code).then(
-				res => {
-					if (!res) throw new Error('Un-booking Course Not Found!');
-				},
-				err => {
-					throw err;
-				}
-			);
-		})
+	await Promise.all(originalList.map(code => unBookASingleCourse(code))).then(
+		rets => {
+			if (rets.includes(false))
+				throw new Error('Error during unBooking courses.');
+		}
 	);
 	if (!(await deleteStudyPlan(matricola)))
 		throw new Error('Deleting current study plan failed.');
-	await Promise.all(
-		newList.forEach(async code => {
-			await bookASingleCourse(code).then(
-				res => {
-					if (!res) throw new Error('Booking Course Not Found!');
-				},
-				err => {
-					throw err;
-				}
-			);
-		})
+	await Promise.all(newList.map(code => bookASingleCourse(code))).then(
+		rets => {
+			if (rets.includes(false))
+				throw new Error('Error during booking courses.');
+		}
 	);
 	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`, {
 		method: 'PUT',

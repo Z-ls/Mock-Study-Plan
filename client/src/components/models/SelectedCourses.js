@@ -7,17 +7,18 @@ export const fetchSelectedCourses = async (
 	matricola
 ) => {
 	const listObj = await getSelectedCourses(matricola);
-	setIsFullTime(!!listObj.isFullTime);
+	setIsFullTime(listObj.isFullTime ? listObj.isFullTime : undefined);
+	console.log(listObj);
 	setIsEmpty(listObj.list.length === 0);
 	setSelectedCoursesList(listObj.list);
 };
 
-export const updateSelectedCourses = async (
+export const updateSelectedCourses = (
 	matricola,
 	isFullTime,
 	selectedCoursesList
 ) => {
-	await updateStudyPlan(matricola, isFullTime, selectedCoursesList);
+	updateStudyPlan(matricola, isFullTime, selectedCoursesList);
 };
 
 export const addSelectedCourse = (course, setSelectedCoursesList) => {

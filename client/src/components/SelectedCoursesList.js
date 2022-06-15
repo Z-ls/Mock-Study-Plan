@@ -11,13 +11,13 @@ import {
 const listFunctions = require('./models/SelectedCourses');
 
 export function SelectedCoursesList(props) {
-	const [isEmpty, setIsEmpty] = useState(undefined);
-	const [isFullTime, setIsFullTime] = useState(false);
+	const [isEmpty, setIsEmpty] = useState(true);
+	const [isFullTime, setIsFullTime] = useState(undefined);
 	const [currCredits, setCurrCredits] = useState(0);
 	const [isValid, setIsValid] = useState(false);
 	const [hasSent, setHasSent] = useState(false);
-	const [minCredits, setMinCredits] = useState(undefined);
-	const [maxCredits, setMaxCredits] = useState(undefined);
+	const [minCredits, setMinCredits] = useState(isEmpty ? undefined : 0);
+	const [maxCredits, setMaxCredits] = useState(isEmpty ? undefined : 0);
 
 	useEffect(() => {
 		setMinCredits(isFullTime ? 60 : 20);
@@ -32,6 +32,7 @@ export function SelectedCoursesList(props) {
 				setIsEmpty,
 				props.matricola
 			);
+			props.setModification(modification => !modification);
 		}
 	}, [
 		props.hasLoggedIn,
@@ -67,20 +68,22 @@ export function SelectedCoursesList(props) {
 					<CreateNewStudyPlanRow
 						setIsEmpty={setIsEmpty}
 						setIsFullTime={setIsFullTime}
+						setModification={props.setModification}
 					/>
 				) : (
 					<ListActions
 						isValid={isValid}
 						isFullTime={isFullTime}
+						matricola={props.matricola}
+						hasSent={hasSent}
 						selectedCoursesList={props.selectedCoursesList}
+						setHasSent={setHasSent}
 						setIsValid={setIsValid}
 						setIsFullTime={setIsFullTime}
 						setCurrCredits={setCurrCredits}
 						setSelectedCoursesList={props.setSelectedCoursesList}
 						setIsEmpty={setIsEmpty}
-						matricola={props.matricola}
-						hasSent={hasSent}
-						setHasSent={setHasSent}
+						setModification={props.setModification}
 					/>
 				)}
 				<RowCredits
@@ -150,6 +153,9 @@ function ListActions(props) {
 								props.setIsFullTime,
 								props.setIsEmpty,
 								props.matricola
+							);
+							props.setModification(
+								modification => !modification
 							);
 							props.setHasSent(() => false);
 						}}>

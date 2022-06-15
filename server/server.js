@@ -102,7 +102,7 @@ app.get('/api/courses', async (req, res) => {
 	);
 });
 
-app.get('/api/courses/:code', async (req, res) => {
+app.get('/api/course/:code', async (req, res) => {
 	return await coursesDAO.getCourseByCode(req.params.code).then(
 		course => {
 			return course
