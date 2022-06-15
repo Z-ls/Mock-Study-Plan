@@ -29,6 +29,7 @@ export function UnauthenticatedUserView(props) {
 			<Container className='d-block justify-content-center'>
 				<Row>
 					<AvailableCoursesList
+						isSelectable={pState.isSelectable}
 						hasLoggedIn={pState.hasLoggedIn}
 						availableCoursesList={pState.availableCoursesList}
 						selectedCoursesList={pState.selectedCoursesList}
@@ -69,6 +70,7 @@ export function SelectedCoursesView(props) {
 						selectedCoursesList={pState.selectedCoursesList}
 						setAvailableCoursesList={pState.setAvailableCoursesList}
 						setSelectedCoursesList={pState.setSelectedCoursesList}
+						setIsSelectable={pState.setIsSelectable}
 						setModification={pState.setModification}
 					/>
 				</Row>

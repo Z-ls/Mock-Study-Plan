@@ -2,7 +2,7 @@ const API = require('../../API');
 
 export const fetchAvailableCourses = async setAvailableCoursesList => {
 	const list = await API.getAllCourses();
-	setAvailableCoursesList(() => list);
+	setAvailableCoursesList(list);
 };
 
 export const setAvailableCoursesStatus = (
