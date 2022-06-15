@@ -3,14 +3,15 @@ import { getSelectedCourses, updateStudyPlan } from '../../API';
 export const fetchSelectedCourses = async (
 	setSelectedCoursesList,
 	setIsFullTime,
+	setIsSelectable,
 	setIsEmpty,
 	matricola
 ) => {
 	const listObj = await getSelectedCourses(matricola);
-	setIsFullTime(listObj.isFullTime ? listObj.isFullTime : undefined);
-	console.log(listObj);
-	setIsEmpty(listObj.list.length === 0);
 	setSelectedCoursesList(listObj.list);
+	setIsSelectable(!(listObj.list.length === 0));
+	setIsEmpty(listObj.list.length === 0);
+	setIsFullTime(listObj.isFullTime);
 };
 
 export const updateSelectedCourses = (

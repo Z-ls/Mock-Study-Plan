@@ -16,8 +16,8 @@ export function SelectedCoursesList(props) {
 	const [currCredits, setCurrCredits] = useState(0);
 	const [isValid, setIsValid] = useState(false);
 	const [hasSent, setHasSent] = useState(false);
-	const [minCredits, setMinCredits] = useState(isEmpty ? undefined : 0);
-	const [maxCredits, setMaxCredits] = useState(isEmpty ? undefined : 0);
+	const [minCredits, setMinCredits] = useState(isFullTime);
+	const [maxCredits, setMaxCredits] = useState(isFullTime);
 
 	useEffect(() => {
 		setMinCredits(isFullTime ? 60 : 20);
@@ -29,22 +29,25 @@ export function SelectedCoursesList(props) {
 			listFunctions.fetchSelectedCourses(
 				props.setSelectedCoursesList,
 				setIsFullTime,
+				props.setIsSelectable,
 				setIsEmpty,
 				props.matricola
 			);
+		} else {
+			props.setIsSelectable(false);
 		}
-		props.setModification(modification => !modification);
 	}, [
 		props.hasLoggedIn,
 		props.matricola,
-		setIsEmpty,
 		props.setSelectedCoursesList,
-		setIsFullTime
+		props.setIsSelectable,
+		setIsFullTime,
+		setIsEmpty
 	]);
 
 	useEffect(() => {
 		setHasSent(false);
-		listFunctions.triggerModification(props.setModification);
+		// listFunctions.triggerModification(props.setModification);
 		const isCreditValid = listFunctions.checkCredits(
 			props.selectedCoursesList,
 			setCurrCredits,
@@ -64,6 +67,7 @@ export function SelectedCoursesList(props) {
 	return isEmpty ? (
 		<Container fluid>
 			<CreateNewStudyPlanRow
+				setIsSelectable={props.setIsSelectable}
 				setIsEmpty={setIsEmpty}
 				setIsFullTime={setIsFullTime}
 				setModification={props.setModification}
@@ -81,6 +85,7 @@ export function SelectedCoursesList(props) {
 					setHasSent={setHasSent}
 					setIsValid={setIsValid}
 					setIsFullTime={setIsFullTime}
+					setIsSelectable={props.setIsSelectable}
 					setCurrCredits={setCurrCredits}
 					setSelectedCoursesList={props.setSelectedCoursesList}
 					setIsEmpty={setIsEmpty}
@@ -121,6 +126,35 @@ export function SelectedCoursesList(props) {
 	);
 }
 
+export function CreateNewStudyPlanRow(props) {
+	return (
+		<Row className='d-flex justify-content-center'>
+			<Col className='d-flex justify-content-center'>
+				<Button
+					className='mx-2'
+					variant='primary'
+					onClick={() => {
+						props.setIsSelectable(true);
+						props.setIsEmpty(false);
+						props.setIsFullTime(true);
+					}}>
+					Create a Full-Time Study Plan
+				</Button>
+				<Button
+					className='mx-2'
+					variant='primary'
+					onClick={() => {
+						props.setIsSelectable(true);
+						props.setIsEmpty(false);
+						props.setIsFullTime(false);
+					}}>
+					Create a Part-Time Study Plan
+				</Button>
+			</Col>
+		</Row>
+	);
+}
+
 function ListActions(props) {
 	const [showDialog, setShowDialog] = useState(false);
 	const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -151,13 +185,14 @@ function ListActions(props) {
 							listFunctions.fetchSelectedCourses(
 								props.setSelectedCoursesList,
 								props.setIsFullTime,
+								props.setIsSelectable,
 								props.setIsEmpty,
 								props.matricola
 							);
 							props.setModification(
 								modification => !modification
 							);
-							props.setHasSent(() => false);
+							props.setHasSent(false);
 						}}>
 						CANCEL
 					</Button>
@@ -166,8 +201,8 @@ function ListActions(props) {
 						variant='warning'
 						onClick={() => {
 							props.setSelectedCoursesList([]);
-							props.setHasSent(() => false);
-							props.setIsValid(() => false);
+							props.setHasSent(false);
+							props.setIsValid(false);
 						}}>
 						CLEAR
 					</Button>
@@ -176,16 +211,16 @@ function ListActions(props) {
 						variant='danger'
 						onClick={() => {
 							if (deleteConfirm) {
-								props.setSelectedCoursesList(() => []);
-								props.setIsValid(() => false);
+								props.setSelectedCoursesList([]);
+								props.setIsValid(false);
 								listFunctions.updateSelectedCourses(
 									props.matricola,
-									undefined,
+									props.isFullTime,
 									props.selectedCoursesList
 								);
-							} else setShowDialog(() => true);
-							setDeleteConfirm(() => false);
-							props.setHasSent(() => true);
+							} else setShowDialog(true);
+							setDeleteConfirm(false);
+							props.setHasSent(true);
 						}}>
 						DELETE
 					</Button>
@@ -323,32 +358,5 @@ function ListRow(props) {
 				)}
 			</Row>
 		</ListGroup.Item>
-	);
-}
-
-export function CreateNewStudyPlanRow(props) {
-	return (
-		<Row className='d-flex justify-content-center'>
-			<Col className='d-flex justify-content-center'>
-				<Button
-					className='mx-2'
-					variant='primary'
-					onClick={() => {
-						props.setIsEmpty(false);
-						props.setIsFullTime(true);
-					}}>
-					Create a Full-Time Study Plan
-				</Button>
-				<Button
-					className='mx-2'
-					variant='primary'
-					onClick={() => {
-						props.setIsEmpty(false);
-						props.setIsFullTime(false);
-					}}>
-					Create a Part-Time Study Plan
-				</Button>
-			</Col>
-		</Row>
 	);
 }

@@ -9,18 +9,17 @@ import {
 export function AvailableCoursesList(props) {
 	useEffect(() => {
 		fetchAvailableCourses(props.setAvailableCoursesList);
-	}, [props.setAvailableCoursesList, props.hasLoggedIn]);
+	}, [props.setAvailableCoursesList]);
 
 	useEffect(() => {
-		if (props.selectedCoursesList)
-			setAvailableCoursesStatus(
-				props.setAvailableCoursesList,
-				props.selectedCoursesList
-			);
+		setAvailableCoursesStatus(
+			props.setAvailableCoursesList,
+			props.selectedCoursesList
+		);
 	}, [
+		props.isSelectable,
 		props.selectedCoursesList,
-		props.setAvailableCoursesList,
-		props.modification
+		props.setAvailableCoursesList
 	]);
 
 	return (
@@ -41,6 +40,7 @@ export function AvailableCoursesList(props) {
 						: {}
 				}>
 				<ListContent
+					isSelectable={props.isSelectable}
 					hasLoggedIn={props.hasLoggedIn}
 					availableCoursesList={props.availableCoursesList}
 					selectedCoursesList={props.selectedCoursesList}
@@ -55,6 +55,7 @@ export function AvailableCoursesList(props) {
 function ListContent(props) {
 	return props.availableCoursesList.map(course => (
 		<ListRow
+			isSelectable={props.isSelectable}
 			hasLoggedIn={props.hasLoggedIn}
 			selectedCoursesList={props.selectedCoursesList}
 			setSelectedCoursesList={props.setSelectedCoursesList}
@@ -66,12 +67,15 @@ function ListContent(props) {
 
 function ListRow(props) {
 	const [showStatus, setShowStatus] = useState(false);
-	const isCourseValid = !(
-		props.course.isFullyBooked ||
-		props.course.isTaken ||
-		props.course.hasConflicts ||
-		!props.course.hasPreparatory
-	);
+	const isCourseValid =
+		!(
+			props.course.isFullyBooked ||
+			props.course.isTaken ||
+			props.course.hasConflicts ||
+			!props.course.hasPreparatory
+		) &&
+		props.isSelectable &&
+		props.hasLoggedIn;
 
 	return (
 		<>
@@ -81,9 +85,11 @@ function ListRow(props) {
 				variant={
 					isCourseValid
 						? ''
-						: !props.course.isTaken
-						? 'danger'
-						: 'success'
+						: props.isSelectable &&
+						  props.hasLoggedIn &&
+						  props.course.isTaken
+						? 'success'
+						: 'danger'
 				}
 				onClick={() => {
 					setShowStatus(showStatus => !showStatus);
@@ -98,6 +104,7 @@ function ListRow(props) {
 			</ListGroup.Item>
 			{showStatus && (
 				<ListRowStatus
+					isSelectable={props.isSelectable}
 					hasLoggedIn={props.hasLoggedIn}
 					showStatus={showStatus}
 					selectedCoursesList={props.selectedCoursesList}
@@ -125,21 +132,27 @@ function ListRowStatus(props) {
 			}}>
 			<Row>
 				<Col>
-					{!props.hasLoggedIn ? (
-						<div className='text-muted'>Please login first</div>
-					) : props.course.isTaken ? (
-						<div className='text-muted'>Course Added</div>
-					) : props.course.isFullyBooked ? (
-						<div className='text-muted'>Fully booked</div>
-					) : props.addable ? (
-						<div className='text'>
-							Click the row to add{' '}
-							<Badge>{props.course.code}</Badge>
-						</div>
+					{props.hasLoggedIn ? (
+						props.addable ? (
+							<div className='text'>
+								Click the row to add{' '}
+								<Badge>{props.course.code}</Badge>
+							</div>
+						) : props.course.isTaken ? (
+							<div className='text-muted'>Course Added</div>
+						) : props.course.isFullyBooked ? (
+							<div className='text-muted'>Fully booked</div>
+						) : !props.isSelectable ? (
+							<div className='text-muted'>
+								Create a Study Plan first
+							</div>
+						) : (
+							<div className='text-muted'>
+								Please check the constraint
+							</div>
+						)
 					) : (
-						<div className='text-muted'>
-							Please check the constraints
-						</div>
+						<div className='text-muted'>Please login first</div>
 					)}
 				</Col>
 				<Col className='d-flex justify-content-center'>

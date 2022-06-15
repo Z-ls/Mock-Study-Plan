@@ -9,6 +9,7 @@ import { checkAuth } from './components/models/AuthComponents';
 function App() {
 	const [availableCoursesList, setAvailableCoursesList] = useState([]);
 	const [selectedCoursesList, setSelectedCoursesList] = useState([]);
+	const [isSelectable, setIsSelectable] = useState(false);
 	const [modification, setModification] = useState(false);
 	const [hasLoggedIn, setHasLoggedIn] = useState(false);
 	const [user, setUser] = useState();
@@ -22,7 +23,9 @@ function App() {
 		hasLoggedIn,
 		setHasLoggedIn,
 		user,
-		setUser
+		setUser,
+		isSelectable,
+		setIsSelectable
 	};
 
 	useEffect(() => {
