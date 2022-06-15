@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react';
-import {
-	BrowserRouter as Router,
-	Route,
-	Routes,
-	Navigate
-} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {
 	UnauthenticatedUserView,
-	SelectedCoursesView,
-	CreateNewStudyPlanView
+	SelectedCoursesView
 } from './components/Views';
 import { checkAuth } from './components/models/AuthComponents';
 
@@ -51,7 +45,8 @@ function App() {
 							<SelectedCoursesView
 								viewStatesAndHooks={viewStatesAndHooks}
 							/>
-						}/>
+						}
+					/>
 				</Route>
 			</Routes>
 		</Router>

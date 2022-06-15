@@ -126,13 +126,11 @@ function ListRowStatus(props) {
 			<Row>
 				<Col>
 					{!props.hasLoggedIn ? (
-						<div className='text-muted'>Please Login first</div>
+						<div className='text-muted'>Please login first</div>
 					) : props.course.isTaken ? (
 						<div className='text-muted'>Course Added</div>
 					) : props.course.isFullyBooked ? (
-						<div className='text-muted'>
-							The course is Fully Booked...Please try later
-						</div>
+						<div className='text-muted'>Fully booked</div>
 					) : props.addable ? (
 						<div className='text'>
 							Click the row to add{' '}
@@ -140,7 +138,7 @@ function ListRowStatus(props) {
 						</div>
 					) : (
 						<div className='text-muted'>
-							Click to Add after eliminating Constraints!
+							Please check the constraints
 						</div>
 					)}
 				</Col>
