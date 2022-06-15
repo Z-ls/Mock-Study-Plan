@@ -32,8 +32,8 @@ export function SelectedCoursesList(props) {
 				setIsEmpty,
 				props.matricola
 			);
-			props.setModification(modification => !modification);
 		}
+		props.setModification(modification => !modification);
 	}, [
 		props.hasLoggedIn,
 		props.matricola,
@@ -61,31 +61,31 @@ export function SelectedCoursesList(props) {
 		props.selectedCoursesList
 	]);
 
-	return (
+	return isEmpty ? (
+		<Container fluid>
+			<CreateNewStudyPlanRow
+				setIsEmpty={setIsEmpty}
+				setIsFullTime={setIsFullTime}
+				setModification={props.setModification}
+			/>
+		</Container>
+	) : (
 		<Container fluid>
 			<ListGroup>
-				{isEmpty ? (
-					<CreateNewStudyPlanRow
-						setIsEmpty={setIsEmpty}
-						setIsFullTime={setIsFullTime}
-						setModification={props.setModification}
-					/>
-				) : (
-					<ListActions
-						isValid={isValid}
-						isFullTime={isFullTime}
-						matricola={props.matricola}
-						hasSent={hasSent}
-						selectedCoursesList={props.selectedCoursesList}
-						setHasSent={setHasSent}
-						setIsValid={setIsValid}
-						setIsFullTime={setIsFullTime}
-						setCurrCredits={setCurrCredits}
-						setSelectedCoursesList={props.setSelectedCoursesList}
-						setIsEmpty={setIsEmpty}
-						setModification={props.setModification}
-					/>
-				)}
+				<ListActions
+					isValid={isValid}
+					isFullTime={isFullTime}
+					matricola={props.matricola}
+					hasSent={hasSent}
+					selectedCoursesList={props.selectedCoursesList}
+					setHasSent={setHasSent}
+					setIsValid={setIsValid}
+					setIsFullTime={setIsFullTime}
+					setCurrCredits={setCurrCredits}
+					setSelectedCoursesList={props.setSelectedCoursesList}
+					setIsEmpty={setIsEmpty}
+					setModification={props.setModification}
+				/>
 				<RowCredits
 					hasSent={hasSent}
 					isValid={isValid}
@@ -328,29 +328,27 @@ function ListRow(props) {
 
 export function CreateNewStudyPlanRow(props) {
 	return (
-		<ListGroup.Item>
-			<Row className='d-flex justify-content-center'>
-				<Col className='d-flex justify-content-center'>
-					<Button
-						className='mx-2'
-						variant='primary'
-						onClick={() => {
-							props.setIsEmpty(false);
-							props.setIsFullTime(true);
-						}}>
-						Create a Full-Time Study Plan
-					</Button>
-					<Button
-						className='mx-2'
-						variant='primary'
-						onClick={() => {
-							props.setIsEmpty(false);
-							props.setIsFullTime(false);
-						}}>
-						Create a Part-Time Study Plan
-					</Button>
-				</Col>
-			</Row>
-		</ListGroup.Item>
+		<Row className='d-flex justify-content-center'>
+			<Col className='d-flex justify-content-center'>
+				<Button
+					className='mx-2'
+					variant='primary'
+					onClick={() => {
+						props.setIsEmpty(false);
+						props.setIsFullTime(true);
+					}}>
+					Create a Full-Time Study Plan
+				</Button>
+				<Button
+					className='mx-2'
+					variant='primary'
+					onClick={() => {
+						props.setIsEmpty(false);
+						props.setIsFullTime(false);
+					}}>
+					Create a Part-Time Study Plan
+				</Button>
+			</Col>
+		</Row>
 	);
 }
