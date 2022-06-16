@@ -5,11 +5,13 @@ import {
 	SelectedCoursesView
 } from './components/Views';
 import { checkAuth } from './components/models/AuthComponents';
+import './App.css';
 
 function App() {
 	const [availableCoursesList, setAvailableCoursesList] = useState([]);
 	const [selectedCoursesList, setSelectedCoursesList] = useState([]);
 	const [isSelectable, setIsSelectable] = useState(false);
+	const [isAvailListReady, setIsAvailListReady] = useState(true);
 	const [modification, setModification] = useState(false);
 	const [hasLoggedIn, setHasLoggedIn] = useState(false);
 	const [user, setUser] = useState();
@@ -25,7 +27,9 @@ function App() {
 		user,
 		setUser,
 		isSelectable,
-		setIsSelectable
+		setIsSelectable,
+		isAvailListReady,
+		setIsAvailListReady
 	};
 
 	useEffect(() => {

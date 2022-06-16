@@ -1,14 +1,19 @@
 const API = require('../../API');
 
-export const fetchAvailableCourses = async setAvailableCoursesList => {
+export const fetchAvailableCourses = async (
+	setAvailableCoursesList,
+	selectedCoursesList
+) => {
 	const list = await API.getAllCourses();
-	setAvailableCoursesList(list);
+	setAvailableCoursesList(() => list);
+	setAvailableCoursesStatus(setAvailableCoursesList, selectedCoursesList);
 };
 
 export const setAvailableCoursesStatus = (
 	setAvailableCoursesList,
 	selectedCoursesList
 ) => {
+	if (selectedCoursesList.length === 0) return;
 	setAvailableCoursesList(availableCoursesList =>
 		availableCoursesList.map(availableCourseOriginal => {
 			let availableCourse = Object.create(availableCourseOriginal);

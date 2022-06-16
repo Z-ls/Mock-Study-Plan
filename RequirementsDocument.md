@@ -1,6 +1,6 @@
 - [x] **A course can have a maximum number of students able to add it into the study plan.**
 
-**In this page[j][k], if no study plan has been created yet, the user may create an empty one, by specifying the full-time or part-time option; this empty list can be edited according to the following instructions[l][m][n][o].**
+- [x] **In this page[j][k], if no study plan has been created yet, the user may create an empty one, by specifying the full-time or part-time option; this empty list can be edited according to the following instructions[l][m][n][o].**
 
 - [x] **The user may “Cancel” the current modifications, and in this case the persistent copy (if any) must not be modified.**
 
@@ -8,21 +8,22 @@
 
 - [x] **Additionally, the user may “Delete” the entire study plan, including the persistent copy.**
 
-**After each of these actions, the application will be in the logged-in [ap][aq][ar][as][at][au][av]home page.**
+- [x] **After each of these actions, the application will be in the logged-in [ap][aq][ar][as][at][au][av]home page.**
 
 Project requirements
 The application architecture and source code must be developed by adopting the **best practices in software development**, in particular those relevant to single-page applications (SPA) using React and HTTP APIs.
 
 The communication between client and server must follow the **“two servers” pattern**, by properly configuring CORS, and **React must run in “development” mode**.
 
-**User authentication (login) and API access must be implemented with passport.js and session cookies.** No further protection mechanism is required. The user registration procedure is not requested.
+- [x] **User authentication (login) and API access must be implemented with passport.js and session cookies.** No further protection mechanism is required. The user registration procedure is not requested.
 
 The project database must be implemented by the student, and **must be pre-loaded with at least five students**, **at least one with a part-time study plan, at least one with a full-time study plan[ay][az][ba][bb]. At least two courses should have reached the maximum number of enrolled students.**
 
 **Contents of the README.md file
 The README.md file must contain the following information (a template is available in the project repository). Generally, each information should take no more than 1-2 lines.**
 
-**Server-side:
+```
+Server-side:
 A list of the HTTP APIs offered by the server, with a short description of the parameters and o the exchanged objects
 A list of the database tables, with their purpose
 Client-side:
@@ -32,7 +33,9 @@ Overall:
 A screenshot of the logged-in home page during an editing session. This screenshot must be embedded in the README by linking an image committed in the repository.
 Username and password of the defined users.
 Submission procedure
-To correctly submit the project, you must:**
+```
+
+To correctly submit the project, you must:
 
 - [x] [a]In the beginning, it is written that when the user logs in, if they already have a study plan, it is immediately displayed in the same page and can be edited. However, at the end, it is mentioned that when the edit is submitted, the application will go to the logged-in homepage. So, I think it is not clear that in which page the edit should be done.
 

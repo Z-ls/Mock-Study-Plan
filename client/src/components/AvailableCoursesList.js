@@ -1,5 +1,12 @@
-import { Container, Row, Col, ListGroup, Badge } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import {
+	Container,
+	Row,
+	Col,
+	ListGroup,
+	Badge,
+	Placeholder
+} from 'react-bootstrap';
+import { useEffect, useState, useTransition } from 'react';
 import { addSelectedCourse } from './models/SelectedCourses';
 import {
 	fetchAvailableCourses,
@@ -8,19 +15,26 @@ import {
 
 export function AvailableCoursesList(props) {
 	useEffect(() => {
-		fetchAvailableCourses(props.setAvailableCoursesList);
-	}, [props.setAvailableCoursesList]);
-
-	useEffect(() => {
-		setAvailableCoursesStatus(
+		fetchAvailableCourses(
 			props.setAvailableCoursesList,
 			props.selectedCoursesList
 		);
 	}, [
 		props.isSelectable,
-		props.selectedCoursesList,
-		props.setAvailableCoursesList
+		props.setAvailableCoursesList,
+		props.selectedCoursesList
 	]);
+
+	// useEffect(() => {
+	// 	setAvailableCoursesStatus(
+	// 		props.setAvailableCoursesList,
+	// 		props.selectedCoursesList
+	// 	);
+	// }, [
+	// 	props.isSelectable,
+	// 	props.selectedCoursesList,
+	// 	props.setAvailableCoursesList
+	// ]);
 
 	return (
 		<Container fluid>
@@ -41,6 +55,8 @@ export function AvailableCoursesList(props) {
 				}>
 				<ListContent
 					isSelectable={props.isSelectable}
+					isReady={props.isReady}
+					setIsReady={props.setIsReady}
 					hasLoggedIn={props.hasLoggedIn}
 					availableCoursesList={props.availableCoursesList}
 					selectedCoursesList={props.selectedCoursesList}
@@ -55,6 +71,8 @@ export function AvailableCoursesList(props) {
 function ListContent(props) {
 	return props.availableCoursesList.map(course => (
 		<ListRow
+			isReady={props.isReady}
+			setIsReady={props.setIsReady}
 			isSelectable={props.isSelectable}
 			hasLoggedIn={props.hasLoggedIn}
 			selectedCoursesList={props.selectedCoursesList}
@@ -67,12 +85,13 @@ function ListContent(props) {
 
 function ListRow(props) {
 	const [showStatus, setShowStatus] = useState(false);
+
 	const isCourseValid =
 		!(
 			props.course.isFullyBooked ||
 			props.course.isTaken ||
 			props.course.hasConflicts ||
-			!props.course.hasPreparatory
+			props.course.hasPreparatory === false
 		) &&
 		props.isSelectable &&
 		props.hasLoggedIn;
@@ -83,7 +102,7 @@ function ListRow(props) {
 				action
 				eventKey={'avail_' + props.course.code}
 				variant={
-					isCourseValid
+					isCourseValid || !props.hasLoggedIn
 						? ''
 						: props.isSelectable &&
 						  props.hasLoggedIn &&
@@ -104,6 +123,8 @@ function ListRow(props) {
 			</ListGroup.Item>
 			{showStatus && (
 				<ListRowStatus
+					isReady={props.isReady}
+					setIsReady={props.setIsReady}
 					isSelectable={props.isSelectable}
 					hasLoggedIn={props.hasLoggedIn}
 					showStatus={showStatus}
@@ -138,14 +159,14 @@ function ListRowStatus(props) {
 								Click the row to add{' '}
 								<Badge>{props.course.code}</Badge>
 							</div>
-						) : props.course.isTaken ? (
-							<div className='text-muted'>Course Added</div>
-						) : props.course.isFullyBooked ? (
-							<div className='text-muted'>Fully booked</div>
 						) : !props.isSelectable ? (
 							<div className='text-muted'>
 								Create a Study Plan first
 							</div>
+						) : props.course.isTaken ? (
+							<div className='text-muted'>Course Added</div>
+						) : props.course.isFullyBooked ? (
+							<div className='text-muted'>Fully booked</div>
 						) : (
 							<div className='text-muted'>
 								Please check the constraint
@@ -183,9 +204,9 @@ function ShowConflictBadges(props) {
 					className='ms-1'
 					bg={
 						props.course.conflictsList &&
-						!props.course.conflictsList.includes(code)
-							? 'success'
-							: 'danger'
+						props.course.conflictsList.includes(code)
+							? 'danger'
+							: 'success'
 					}>
 					{code}
 				</Badge>

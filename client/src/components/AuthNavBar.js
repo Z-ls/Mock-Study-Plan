@@ -1,6 +1,15 @@
 import { useState } from 'react';
-import { Container, Row, Col, Form, Navbar, Button } from 'react-bootstrap';
-import { logIn, logOut } from '../API';
+import {
+	Container,
+	Row,
+	Col,
+	Form,
+	Navbar,
+	Button,
+	OverlayTrigger,
+	Popover
+} from 'react-bootstrap';
+import { handleLogin, handleLogout } from './models/AuthComponents';
 
 export function AuthNavBar(props) {
 	const [id, setId] = useState('');
@@ -33,10 +42,21 @@ export function AuthNavBar(props) {
 }
 
 function LoginForm(props) {
+	const [errMessage, setErrMessage] = useState('');
+	const [showPopup, setShowPopup] = useState(false);
+
 	function submitCredentials(event) {
 		event.preventDefault();
-		const credentials = { username: props.id, password: props.password };
-		handleLogin(credentials, props.setHasLoggedIn, props.setUser);
+		const credentials = {
+			username: props.id,
+			password: props.password
+		};
+		handleLogin(credentials, props.setHasLoggedIn, props.setUser).catch(
+			err => {
+				setErrMessage(err.error ? err.error : 'Missing credentials');
+				setShowPopup(true);
+			}
+		);
 	}
 
 	return (
@@ -45,31 +65,42 @@ function LoginForm(props) {
 				lg={4}
 				className='d-inline justify-content-end align-items-center'>
 				<Form.Control
+					required={true}
 					value={props.id}
 					placeholder='matricola'
 					type='text'
 					onChange={event => props.setId(event.target.value)}
-					required={true}
 				/>
 			</Col>
 			<Col
 				lg={4}
 				className='d-inline justify-content-end align-items-center'>
 				<Form.Control
+					required={true}
+					minLength={6}
 					value={props.password}
 					placeholder='password'
 					type='password'
 					onChange={event => props.setPassword(event.target.value)}
-					required={true}
-					minLength={6}
 				/>
 			</Col>
 			<Col className='d-flex justify-content-end'>
-				<Button
-					variant='success'
-					onClick={submitCredentials}>
-					LOGIN
-				</Button>
+				<OverlayTrigger
+					trigger='click'
+					show={showPopup}
+					key='login-popup'
+					placement='bottom'
+					overlay={
+						<Popover>
+							<Popover.Body>{errMessage}</Popover.Body>
+						</Popover>
+					}>
+					<Button
+						variant='success'
+						onClick={submitCredentials}>
+						LOGIN
+					</Button>
+				</OverlayTrigger>
 			</Col>
 			<Col className='d-flex justify-content-start'>
 				<Button
@@ -105,18 +136,12 @@ function WelcomeMessage(props) {
 	);
 }
 
-const handleLogin = async (credentials, setHasLoggedIn, setUser) => {
-	try {
-		const user = await logIn(credentials);
-		setHasLoggedIn(true);
-		setUser(user);
-	} catch (err) {
-		throw err;
-	}
-};
-
-const handleLogout = async (setHasLoggedIn, setUser) => {
-	await logOut();
-	setHasLoggedIn(false);
-	setUser(undefined);
-};
+function LoginButtonWithPopup(props) {
+	return (
+		<Popover placement='bottom'>
+			<Popover.Body>
+				<strong>{props.errMessage}</strong>
+			</Popover.Body>
+		</Popover>
+	);
+}

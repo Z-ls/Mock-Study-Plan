@@ -1,4 +1,8 @@
-import { getSelectedCourses, updateStudyPlan } from '../../API';
+import {
+	getSelectedCourses,
+	updateStudyPlan,
+	deleteStudyPlan
+} from '../../API';
 
 export const fetchSelectedCourses = async (
 	setSelectedCoursesList,
@@ -28,7 +32,7 @@ export const addSelectedCourse = (course, setSelectedCoursesList) => {
 			course.isFullyBooked ||
 			course.isTaken ||
 			course.hasConflicts ||
-			!course.hasPreparatory
+			course.hasPreparatory === false
 		)
 	)
 		setSelectedCoursesList(originalList => originalList.concat(course));
@@ -41,6 +45,10 @@ export const removeSelectedCourse = async (
 	setSelectedCoursesList(selectedCoursesList =>
 		selectedCoursesList.filter(course => course.code !== courseCode)
 	);
+};
+
+export const deleteCurrentStudyPlan = async matricola => {
+	await deleteStudyPlan(matricola);
 };
 
 export const checkFullyBooked = selectedCoursesList => {

@@ -44,18 +44,24 @@ export const getCourseByCode = async code => {
 };
 
 export const getSelectedCourses = async matricola => {
-	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`);
+	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`, {
+		method: 'GET',
+		credentials: 'include'
+	});
 	const courseJson = await res.json();
 	if (res.ok) {
 		const isFullTime = courseJson.is_full_time;
-		let list = await Promise.all(
-			courseJson.courses.split(',').map(code => getCourseByCode(code))
-		);
-		if (list.includes(undefined)) list = [];
-		return { list, isFullTime };
-	}
-	if (res.status === 404) return [];
-	else throw courseJson;
+		const list = courseJson.courses
+			? await Promise.all(
+					courseJson.courses
+						.split(',')
+						.map(code => getCourseByCode(code))
+			  ).catch(err => {
+					throw err;
+			  })
+			: [];
+		return { isFullTime, list };
+	} else throw courseJson;
 };
 
 export const bookASingleCourse = async code => {
@@ -63,7 +69,7 @@ export const bookASingleCourse = async code => {
 		method: 'PUT',
 		credentials: 'include'
 	});
-	return res.ok;
+	if (!res.ok) throw await res.text();
 };
 
 export const unBookASingleCourse = async code => {
@@ -71,36 +77,42 @@ export const unBookASingleCourse = async code => {
 		method: 'PUT',
 		credentials: 'include'
 	});
-	return res.ok;
+	if (!res.ok) throw await res.text();
 };
 
 export const deleteStudyPlan = async matricola => {
-	const res = await fetch(
-		SERVER_URL + `/api/studyPlans/${matricola}/delete`,
-		{
-			method: 'PUT',
-			credentials: 'include'
-		}
+	const originalList = await getSelectedCourses(matricola).then(list =>
+		list.list.map(course => course.code)
 	);
-	return res.ok;
+	await Promise.all(
+		originalList.map(code => unBookASingleCourse(code))
+	).catch(err => {
+		throw err;
+	});
+	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ isFullTime: null, courses: null })
+	});
+	if (!res.ok) {
+		throw await res.json();
+	}
 };
 
 export const updateStudyPlan = async (matricola, isFullTime, courses) => {
-	const oldList = await getSelectedCourses(matricola);
-	const originalList = oldList.list.map(course => course.code);
-	const newList = courses.map(course => course.code);
-	await Promise.all(originalList.map(code => unBookASingleCourse(code))).then(
-		rets => {
-			if (rets.includes(false))
-				throw new Error('Error during unBooking courses.');
-		}
+	const originalList = await getSelectedCourses(matricola).then(list =>
+		list.list.map(course => course.code)
 	);
-	if (!(await deleteStudyPlan(matricola)))
-		throw new Error('Deleting current study plan failed.');
-	await Promise.all(newList.map(code => bookASingleCourse(code))).then(
-		rets => {
-			if (rets.includes(false))
-				throw new Error('Error during booking courses.');
+	const newList = courses.map(course => course.code);
+	await Promise.all(
+		originalList.map(code => unBookASingleCourse(code))
+	).catch(err => {
+		throw err;
+	});
+	await Promise.all(newList.map(code => bookASingleCourse(code))).catch(
+		err => {
+			throw err;
 		}
 	);
 	const res = await fetch(SERVER_URL + `/api/studyPlans/${matricola}`, {
@@ -131,6 +143,7 @@ export const logIn = async credentials => {
 
 export const getUserInfo = async () => {
 	const res = await fetch(SERVER_URL + '/api/sessions/current', {
+		method: 'GET',
 		credentials: 'include'
 	});
 	const user = await res.json();

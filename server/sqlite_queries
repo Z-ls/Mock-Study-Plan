@@ -27,11 +27,6 @@ CREATE TABLE "Users" (
 	"salt"	TEXT NOT NULL,
 	PRIMARY KEY("matricola")
 );
-DROP TABLE IF EXISTS "Incompatible_Pairs";
-CREATE TABLE "Incompatible_Pairs" (
-	"course1"	TEXT NOT NULL,
-	"course2"	TEXT NOT NULL
-);
 
 INSERT INTO "Courses"(code, name, credits, curr_students, max_students, incompatible_list, preparatory_course)
 VALUES
@@ -59,7 +54,18 @@ VALUES
 ("01URSPD","Internet Video Streaming",6,0,2,null,null);
 
 INSERT INTO Users(matricola, first_name, last_name, hex, salt) VALUES 
-("s123456", "Mario", "Rossi", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
-("s987654", "John", "Doe", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
-INSERT INTO Study_Plans(matricola, is_full_time, courses) VALUES ("s123456", 1, "01OUZPD,03UEWOV,01TYDOV,01SQOOV,01NYHOV,02KPNOV,01URROV,01URSPD"),
-("s987654", null, "");
+("s100000", "Mario", "Rossi", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s200000", "John", "Doe", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s300000", "San", "Zhang", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s400000", "John", "Smith", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s500000", "Taro", "Yamada", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s000000", "Si", "Li", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
+("s999999", "Wu", "Wang", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
+INSERT INTO Study_Plans(matricola, is_full_time, courses) VALUES
+("s000000", null, null), 
+("s100000", null, null),
+("s200000", null, null),
+("s300000", null, null),
+("s400000", null, null),
+("s500000", null, null),
+("s999999", null, null);

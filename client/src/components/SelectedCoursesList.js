@@ -8,6 +8,7 @@ import {
 	Badge,
 	Modal
 } from 'react-bootstrap';
+import { fetchAvailableCourses } from './models/AvailableCourses';
 const listFunctions = require('./models/SelectedCourses');
 
 export function SelectedCoursesList(props) {
@@ -87,7 +88,9 @@ export function SelectedCoursesList(props) {
 					setIsFullTime={setIsFullTime}
 					setIsSelectable={props.setIsSelectable}
 					setCurrCredits={setCurrCredits}
+					setAvailableCoursesList={props.setAvailableCoursesList}
 					setSelectedCoursesList={props.setSelectedCoursesList}
+					setIsAvailListReady={props.setIsAvailListReady}
 					setIsEmpty={setIsEmpty}
 					setModification={props.setModification}
 				/>
@@ -115,6 +118,7 @@ export function SelectedCoursesList(props) {
 				}>
 				<ListContent
 					selectedCoursesList={props.selectedCoursesList}
+					setAvailableCoursesList={props.setAvailableCoursesList}
 					setSelectedCoursesList={props.setSelectedCoursesList}
 					setCurrCredits={setCurrCredits}
 					minCredits={minCredits}
@@ -189,10 +193,6 @@ function ListActions(props) {
 								props.setIsEmpty,
 								props.matricola
 							);
-							props.setModification(
-								modification => !modification
-							);
-							props.setHasSent(false);
 						}}>
 						CANCEL
 					</Button>
@@ -211,18 +211,27 @@ function ListActions(props) {
 						variant='danger'
 						onClick={() => {
 							if (deleteConfirm) {
-								props.setSelectedCoursesList([]);
-								props.setIsValid(false);
-								listFunctions.updateSelectedCourses(
-									props.matricola,
-									props.isFullTime,
-									props.selectedCoursesList
+								props.setIsEmpty(true);
+								props.setIsSelectable(false);
+								listFunctions.deleteCurrentStudyPlan(
+									props.matricola
+								);
+								setTimeout(
+									() =>
+										listFunctions.fetchSelectedCourses(
+											props.setSelectedCoursesList,
+											props.setIsFullTime,
+											props.setIsSelectable,
+											props.setIsEmpty,
+											props.matricola
+										),
+									500
 								);
 							} else setShowDialog(true);
 							setDeleteConfirm(false);
 							props.setHasSent(true);
 						}}>
-						DELETE
+						{!deleteConfirm ? 'DELETE' : 'CONFIRM DELETE'}
 					</Button>
 					<Modal
 						show={showDialog}
@@ -279,22 +288,13 @@ function RowCredits(props) {
 			)}>
 			<Row>
 				<Col className='d-flex justify-content-start'>
-					Min Credits:{' '}
-					{props.minCredits
-						? props.minCredits
-						: ' Please choose a Study Plan'}
+					Min Credits: {props.minCredits}
 				</Col>
 				<Col className='d-flex justify-content-center'>
-					Current Credits:{' '}
-					{props.currCredits
-						? props.currCredits
-						: ' Please choose a Study Plan'}
+					Current Credits: {props.currCredits}
 				</Col>
 				<Col className='d-flex justify-content-end'>
-					Max Credits:{' '}
-					{props.maxCredits
-						? props.maxCredits
-						: ' Please choose a Study Plan'}
+					Max Credits: {props.maxCredits}
 				</Col>
 			</Row>
 		</ListGroup.Item>

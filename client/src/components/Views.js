@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { AvailableCoursesList } from './AvailableCoursesList';
 import { SelectedCoursesList } from './SelectedCoursesList';
 // Structural Import
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { AuthNavBar } from './AuthNavBar';
 
 export function UnauthenticatedUserView(props) {
@@ -29,6 +29,8 @@ export function UnauthenticatedUserView(props) {
 			<Container className='d-block justify-content-center'>
 				<Row>
 					<AvailableCoursesList
+						isReady={pState.isAvailListReady}
+						setIsReady={pState.setIsAvailListReady}
 						isSelectable={pState.isSelectable}
 						hasLoggedIn={pState.hasLoggedIn}
 						availableCoursesList={pState.availableCoursesList}
@@ -71,6 +73,7 @@ export function SelectedCoursesView(props) {
 						setAvailableCoursesList={pState.setAvailableCoursesList}
 						setSelectedCoursesList={pState.setSelectedCoursesList}
 						setIsSelectable={pState.setIsSelectable}
+						setIsAvailListReady={pState.setIsAvailListReady}
 						setModification={pState.setModification}
 					/>
 				</Row>

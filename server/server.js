@@ -29,7 +29,10 @@ app.use(cors(corsOptions));
 passport.use(
 	new LocalStrategy(async function verify(username, password, cb) {
 		const user = await userDAO.getUserByIdAndPassword(username, password);
-		if (!user) return cb(null, false, 'Incorrect username or password.');
+		if (!user)
+			return cb(null, false, {
+				error: 'Incorrect username or password.'
+			});
 		return cb(null, user);
 	})
 );
@@ -88,7 +91,6 @@ app.delete('/api/sessions/current', (req, res) => {
 		res.end();
 	});
 });
-
 // Functional APIs
 
 app.get('/api/courses', async (req, res) => {
@@ -103,6 +105,7 @@ app.get('/api/courses', async (req, res) => {
 });
 
 app.get('/api/course/:code', async (req, res) => {
+	validateRequest(req.params.code);
 	return await coursesDAO.getCourseByCode(req.params.code).then(
 		course => {
 			return course
@@ -115,34 +118,11 @@ app.get('/api/course/:code', async (req, res) => {
 	);
 });
 
-app.put('/api/courses/book/:code', async (req, res) => {
-	return await coursesDAO.bookACourseByCode(req.params.code).then(
-		ret => {
-			return ret ? res.status(200).end() : res.status(404).end();
-		},
-		err => {
-			return res.status(503).send(err);
-		}
-	);
-});
-
-app.put('/api/courses/unBook/:code', async (req, res) => {
-	return await coursesDAO.unBookACourseByCode(req.params.code).then(
-		ret => {
-			return ret ? res.status(200).end() : res.status(404).end();
-		},
-		err => {
-			return res.status(503).send(err);
-		}
-	);
-});
-
-app.get('/api/studyPlans/:matricola', async (req, res) => {
+app.get('/api/studyPlans/:matricola', isLoggedIn, async (req, res) => {
+	validateRequest(null, req.params.matricola);
 	return await studyPlanDAO.getStudyPlanById(req.params.matricola).then(
 		studyPlan => {
-			return studyPlan
-				? res.status(200).json(studyPlan)
-				: res.status(404).send();
+			return res.status(200).json(studyPlan);
 		},
 		err => {
 			return res.status(500).send(err);
@@ -150,7 +130,13 @@ app.get('/api/studyPlans/:matricola', async (req, res) => {
 	);
 });
 
-app.put('/api/studyPlans/:matricola', async (req, res) => {
+app.put('/api/studyPlans/:matricola', isLoggedIn, async (req, res) => {
+	validateRequest(
+		null,
+		req.params.matricola,
+		req.body.courses,
+		req.body.isFullTime
+	);
 	return await studyPlanDAO
 		.updateStudyPlan(
 			req.params.matricola,
@@ -167,13 +153,27 @@ app.put('/api/studyPlans/:matricola', async (req, res) => {
 		);
 });
 
-app.put('/api/studyPlans/:matricola/delete', async (req, res) => {
-	return await studyPlanDAO.updateStudyPlan(req.params.matricola).then(
-		() => {
-			return res.status(201).end();
+app.put('/api/courses/book/:code', isLoggedIn, async (req, res) => {
+	validateRequest(req.params.code);
+	return await coursesDAO.bookACourseByCode(req.params.code).then(
+		ret => {
+			return ret ? res.status(200).end() : res.status(404).end();
 		},
 		err => {
-			return res.status(503).json(err);
+			return res.status(503).send(err);
+		}
+	);
+});
+
+app.put('/api/courses/unBook/:code', isLoggedIn, async (req, res) => {
+	validateRequest(req.params.code);
+	if (req.params.code.length !== 7) return res.status(422).end();
+	return await coursesDAO.unBookACourseByCode(req.params.code).then(
+		ret => {
+			return ret ? res.status(200).end() : res.status(404).end();
+		},
+		err => {
+			return res.status(503).send(err);
 		}
 	);
 });
@@ -181,3 +181,65 @@ app.put('/api/studyPlans/:matricola/delete', async (req, res) => {
 app.listen(port, () => {
 	console.log(`Server listening at http://localhost:${port}`);
 });
+
+const validateRequest = async (
+	code,
+	matricola = null,
+	studyPlan = null,
+	isFullTime = false
+) => {
+	if ((code && code.length != 7) || (matricola && matricola.length != 7))
+		return res.status(422).send({ error: 'Code/Matricola abnormal' });
+	if (
+		studyPlan &&
+		(await Promise.all(
+			studyPlan.map(code => coursesDAO.getCourseByCode(code))
+		).then(rets => rets.some(ret => !ret)))
+	)
+		return res
+			.status(422)
+			.send({ error: 'Study Plan contains abnormal chunks' });
+	return await checkConstraints(studyPlan, isFullTime);
+};
+
+const checkConstraints = async (studyPlan, isFullTime) => {
+	if (studyPlan && studyPlan.length > 0 && isFullTime) {
+		let currCredits = 0;
+		const studyPlanCourseList = await Promise.all(
+			studyPlan.map(code => coursesDAO.getCourseByCode(code))
+		);
+		studyPlanCourseList.forEach(course => {
+			if (course.curr_Students === course.max_students) {
+				return res
+					.status(422)
+					.send({ error: 'List contains fully booked course' });
+			}
+			if (
+				course.incompatible_list &&
+				studyPlan
+					.split(',')
+					.some(code =>
+						course.incompatible_list.split(',').includes(code)
+					)
+			)
+				return res
+					.status(422)
+					.send({ error: 'List contains conflict pairs' });
+			if (
+				course.preparatory_course &&
+				!studyPlan.split(',').includes(course.preparatory_course)
+			)
+				return res.status(422).send({
+					error: 'List contains course that lacks preparatory course'
+				});
+			currCredits += course.credits;
+		});
+		if (
+			(currCredits > isFullTime ? 80 : 40) ||
+			(currCredits < isFullTime ? 60 : 20)
+		)
+			return res.status(422).send({
+				error: 'List does not meet credit constraints'
+			});
+	}
+};
