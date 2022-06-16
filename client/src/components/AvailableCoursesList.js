@@ -1,17 +1,10 @@
-import {
-	Container,
-	Row,
-	Col,
-	ListGroup,
-	Badge,
-	Placeholder
-} from 'react-bootstrap';
+import { Container, Row, Col, ListGroup, Badge } from 'react-bootstrap';
 import { useEffect, useState, useTransition } from 'react';
-import { addSelectedCourse } from './models/SelectedCourses';
+import { addSelectedCourse } from './models/SelectedCoursesFunctions';
 import {
 	fetchAvailableCourses,
 	setAvailableCoursesStatus
-} from './models/AvailableCourses';
+} from './models/AvailableCoursesFunctions';
 
 export function AvailableCoursesList(props) {
 	useEffect(() => {
@@ -24,17 +17,6 @@ export function AvailableCoursesList(props) {
 		props.setAvailableCoursesList,
 		props.selectedCoursesList
 	]);
-
-	// useEffect(() => {
-	// 	setAvailableCoursesStatus(
-	// 		props.setAvailableCoursesList,
-	// 		props.selectedCoursesList
-	// 	);
-	// }, [
-	// 	props.isSelectable,
-	// 	props.selectedCoursesList,
-	// 	props.setAvailableCoursesList
-	// ]);
 
 	return (
 		<Container fluid>
@@ -61,7 +43,6 @@ export function AvailableCoursesList(props) {
 					availableCoursesList={props.availableCoursesList}
 					selectedCoursesList={props.selectedCoursesList}
 					setSelectedCoursesList={props.setSelectedCoursesList}
-					setModification={props.setModification}
 				/>
 			</ListGroup>
 		</Container>
@@ -77,7 +58,6 @@ function ListContent(props) {
 			hasLoggedIn={props.hasLoggedIn}
 			selectedCoursesList={props.selectedCoursesList}
 			setSelectedCoursesList={props.setSelectedCoursesList}
-			setModification={props.setModification}
 			course={course}
 		/>
 	));
@@ -130,7 +110,6 @@ function ListRow(props) {
 					showStatus={showStatus}
 					selectedCoursesList={props.selectedCoursesList}
 					setSelectedCoursesList={props.setSelectedCoursesList}
-					setModification={props.setModification}
 					addable={isCourseValid}
 					course={props.course}
 				/>

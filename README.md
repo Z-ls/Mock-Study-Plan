@@ -4,42 +4,127 @@
 
 ## React Client Application Routes
 
--   Route `/`: page content and purpose
--   Route `/something/:param`: page content and purpose, param specification
--   ...
+- Route `/`: Unauthenticated Homepage.
+  - Shows the complete available course list.
+- Route `/edit`: Editing Route
+  - Once authenticated, the user will be redirected to this route to create/edit study plan.
 
 ## API Server
 
--   POST `/api/login`
-    -   request parameters and request body content
-    -   response body content
--   GET `/api/something`
-    -   request parameters
-    -   response body content
--   POST `/api/something`
-    -   request parameters and request body content
-    -   response body content
--   ...
+### GET
+
+- /api/courses/
+  - Request: _None_
+  - Respond:
+    - body: complete available course list.
+
+- /api/course/:code
+  - Request:
+    - params:
+      - code: the code of requesting course
+  - Respond:
+    - body:
+      - the course described by the code
+
+- /api/studyPlans/:matricola
+  - Request:
+    - params:
+      - matricola: the student number(with initial s) of the requesting student
+  - Respond:
+    - body:
+      - the list of selected courses belonging to the student
+
+- /api/sessions/current
+  - Request: _None_
+  - Respond:
+    - If authenticated, the current session maintained by express-session.js
+    - If failed, an error message
+
+### POST
+
+- /api/sessions/current
+  - Request:
+    - Credentials: the user's information for authentication
+  - Respond:
+    - If authenticated, an user session
+    - If failed, an error message
+  
+### PUT
+
+- /api/studyPlans/:matricola
+  - Update the study plan (including "deleting")
+  - Request:
+    - params:
+      - matricola: the student number(with initial s) of the requesting student
+  - Respond:
+    - body:
+      - If updating successfully, a status 201 without any message
+      - If failed, a 503 with a json message of the reason
+
+- /api/courses/book/:code
+  - Booking a course
+  - Request:
+    - params:
+      - code: The course code of the requesting course
+  - Respond:
+    - If successful, status 200 without message
+    - If failed
+      - Status 404 for no courses found
+      - Status 503 for general errors
+
+- /api/courses/unBook/:code
+  - Un-booking a course
+  - Request:
+    - params:
+      - code: The course code of the requesting course
+  - Respond:
+    - If successful, status 200 without message
+    - If failed
+      - Status 404 for no courses found
+      - Status 503 for general errors
+
+### DELETE
+
+- /api/sessions/current
+- Remove current session of user(log out)
+  - Request: _None_
+  - Respond: _None_
 
 ## Database Tables
 
--   Table `users` - contains xx yy zz
--   Table `something` - contains ww qq ss
--   ...
+- Table `Courses` - contains all the necessary information about any course available
+- Table `Study_Plans` - contains all defined/undefined study plans (assuming pre-defined along with the user)
+- Table `Users` - containing all the user information
 
 ## Main React Components
 
--   `ListOfSomething` (in `List.js`): component purpose and main functionality
--   `GreatButton` (in `GreatButton.js`): component purpose and main functionality
--   ...
-
-(only _main_ components, minor ones may be skipped)
+```text
+ /
+├── AuthNavBar: The navigator bar that provides login/logout functionalities.
+├── AvailableCoursesList: The list for all available courses to be selected
+│   ├── ListRow: The static row that display basic information for courses
+│   └── ListRowStatus: The interactive row that displays additional information
+└── /edit
+    └── SelectedCoursesList: The list for user-selected courses
+        ├── CreateNewStudyPlanRow: Providing options about Full time when creating
+        ├── ListCredits: The row that displays current credits
+        ├── ListActions: Providing table functions for the list, like save or delete
+        └── ListContent: The row that displays information of selected course
+```
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![Screenshot](./img/screenshot.png)
 
 ## Users Credentials
 
--   username, password (plus any other requested info)
--   username, password (plus any other requested info)
+### Part-Time
+
+- s100000, password
+- s300000, password
+- s500000, password
+
+### Full-Time
+
+- s200000, password
+- s400000, password

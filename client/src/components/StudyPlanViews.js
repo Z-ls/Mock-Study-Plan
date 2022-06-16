@@ -35,10 +35,8 @@ export function UnauthenticatedUserView(props) {
 						hasLoggedIn={pState.hasLoggedIn}
 						availableCoursesList={pState.availableCoursesList}
 						selectedCoursesList={pState.selectedCoursesList}
-						modification={pState.modification}
 						setAvailableCoursesList={pState.setAvailableCoursesList}
 						setSelectedCoursesList={pState.setSelectedCoursesList}
-						setModification={pState.setModification}
 					/>
 				</Row>
 			</Container>
@@ -74,7 +72,6 @@ export function SelectedCoursesView(props) {
 						setSelectedCoursesList={pState.setSelectedCoursesList}
 						setIsSelectable={pState.setIsSelectable}
 						setIsAvailListReady={pState.setIsAvailListReady}
-						setModification={pState.setModification}
 					/>
 				</Row>
 			)}

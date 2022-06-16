@@ -101,10 +101,6 @@ export const alterFullTime = setIsFullTime => {
 	setIsFullTime(isFullTime => !isFullTime);
 };
 
-export const triggerModification = setModification => {
-	setModification(modification => !modification);
-};
-
 export const changeListVariant = (isValidList, listSent) => {
 	if (!listSent) {
 		return isValidList ? 'warning' : 'danger';

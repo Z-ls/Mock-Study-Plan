@@ -9,7 +9,7 @@ import {
 	OverlayTrigger,
 	Popover
 } from 'react-bootstrap';
-import { handleLogin, handleLogout } from './models/AuthComponents';
+import { handleLogin, handleLogout } from './models/AuthFunctions';
 
 export function AuthNavBar(props) {
 	const [id, setId] = useState('');

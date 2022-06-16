@@ -8,8 +8,8 @@ import {
 	Badge,
 	Modal
 } from 'react-bootstrap';
-import { fetchAvailableCourses } from './models/AvailableCourses';
-const listFunctions = require('./models/SelectedCourses');
+import { fetchAvailableCourses } from './models/AvailableCoursesFunctions';
+const listFunctions = require('./models/SelectedCoursesFunctions');
 
 export function SelectedCoursesList(props) {
 	const [isEmpty, setIsEmpty] = useState(true);
@@ -48,7 +48,6 @@ export function SelectedCoursesList(props) {
 
 	useEffect(() => {
 		setHasSent(false);
-		// listFunctions.triggerModification(props.setModification);
 		const isCreditValid = listFunctions.checkCredits(
 			props.selectedCoursesList,
 			setCurrCredits,
@@ -57,7 +56,6 @@ export function SelectedCoursesList(props) {
 		);
 		setIsValid(isCreditValid);
 	}, [
-		props.setModification,
 		setHasSent,
 		setCurrCredits,
 		maxCredits,
@@ -71,7 +69,6 @@ export function SelectedCoursesList(props) {
 				setIsSelectable={props.setIsSelectable}
 				setIsEmpty={setIsEmpty}
 				setIsFullTime={setIsFullTime}
-				setModification={props.setModification}
 			/>
 		</Container>
 	) : (
@@ -92,7 +89,6 @@ export function SelectedCoursesList(props) {
 					setSelectedCoursesList={props.setSelectedCoursesList}
 					setIsAvailListReady={props.setIsAvailListReady}
 					setIsEmpty={setIsEmpty}
-					setModification={props.setModification}
 				/>
 				<RowCredits
 					hasSent={hasSent}
@@ -110,12 +106,7 @@ export function SelectedCoursesList(props) {
 					</Row>
 				</ListGroup.Item>
 			</ListGroup>
-			<ListGroup
-				style={
-					props.hasLoggedIn
-						? { overflow: 'auto', maxHeight: '300px' }
-						: {}
-				}>
+			<ListGroup style={{ overflow: 'auto', maxHeight: '300px' }}>
 				<ListContent
 					selectedCoursesList={props.selectedCoursesList}
 					setAvailableCoursesList={props.setAvailableCoursesList}
