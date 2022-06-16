@@ -1,10 +1,7 @@
 import { Container, Row, Col, ListGroup, Badge } from 'react-bootstrap';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { addSelectedCourse } from './models/SelectedCoursesFunctions';
-import {
-	fetchAvailableCourses,
-	setAvailableCoursesStatus
-} from './models/AvailableCoursesFunctions';
+import { fetchAvailableCourses } from './models/AvailableCoursesFunctions';
 
 export function AvailableCoursesList(props) {
 	useEffect(() => {
@@ -33,7 +30,7 @@ export function AvailableCoursesList(props) {
 				style={
 					props.hasLoggedIn
 						? { overflow: 'auto', maxHeight: '300px' }
-						: {}
+						: { overflow: 'auto', maxHeight: '700px' }
 				}>
 				<ListContent
 					isSelectable={props.isSelectable}
@@ -52,6 +49,7 @@ export function AvailableCoursesList(props) {
 function ListContent(props) {
 	return props.availableCoursesList.map(course => (
 		<ListRow
+			key={'avail-' + course.code}
 			isReady={props.isReady}
 			setIsReady={props.setIsReady}
 			isSelectable={props.isSelectable}
@@ -80,10 +78,10 @@ function ListRow(props) {
 		<>
 			<ListGroup.Item
 				action
-				eventKey={'avail_' + props.course.code}
+				// eventKey={'event_avail_' + props.course.code}
 				variant={
 					isCourseValid || !props.hasLoggedIn
-						? ''
+						? ' '
 						: props.isSelectable &&
 						  props.hasLoggedIn &&
 						  props.course.isTaken
@@ -93,82 +91,80 @@ function ListRow(props) {
 				onClick={() => {
 					setShowStatus(showStatus => !showStatus);
 				}}>
-				<Row className='d-flex align-items-center justify-content-evenly'>
+				<Row className='d-flex align-items-center justify-content-evenly my-2'>
 					<Col lg={2}>{props.course.code}</Col>
 					<Col lg={5}>{props.course.name}</Col>
 					<Col lg={1}>{props.course.credits}</Col>
 					<Col lg={1}>{props.course.currStudents}</Col>
 					<Col lg={1}>{props.course.maxStudents}</Col>
 				</Row>
+				{showStatus && (
+					<ListRowStatus
+						isReady={props.isReady}
+						setIsReady={props.setIsReady}
+						isSelectable={props.isSelectable}
+						hasLoggedIn={props.hasLoggedIn}
+						showStatus={showStatus}
+						selectedCoursesList={props.selectedCoursesList}
+						setSelectedCoursesList={props.setSelectedCoursesList}
+						addable={isCourseValid}
+						course={props.course}
+					/>
+				)}
 			</ListGroup.Item>
-			{showStatus && (
-				<ListRowStatus
-					isReady={props.isReady}
-					setIsReady={props.setIsReady}
-					isSelectable={props.isSelectable}
-					hasLoggedIn={props.hasLoggedIn}
-					showStatus={showStatus}
-					selectedCoursesList={props.selectedCoursesList}
-					setSelectedCoursesList={props.setSelectedCoursesList}
-					addable={isCourseValid}
-					course={props.course}
-				/>
-			)}
 		</>
 	);
 }
 
 function ListRowStatus(props) {
 	return (
-		<ListGroup.Item
-			action
-			disabled={!props.addable}
-			styles={{
-				...defaultStyles,
-				...transitionStyles[props.showStatus]
-			}}
+		<Row
+			as='li'
+			className='status-row d-flex align-items-center justify-content-between'
 			onClick={() => {
 				addSelectedCourse(props.course, props.setSelectedCoursesList);
 			}}>
-			<Row>
-				<Col>
-					{props.hasLoggedIn ? (
-						props.addable ? (
-							<div className='text'>
-								Click the row to add{' '}
-								<Badge>{props.course.code}</Badge>
-							</div>
-						) : !props.isSelectable ? (
-							<div className='text-muted'>
-								Create a Study Plan first
-							</div>
-						) : props.course.isTaken ? (
-							<div className='text-muted'>Course Added</div>
-						) : props.course.isFullyBooked ? (
-							<div className='text-muted'>Fully booked</div>
-						) : (
-							<div className='text-muted'>
-								Please check the constraint
-							</div>
-						)
+			<hr
+				style={{
+					backgroundColor: 'grey',
+					height: 1,
+					opacity: 0.3
+				}}
+			/>
+			<Col>
+				{props.hasLoggedIn ? (
+					props.addable ? (
+						<div className='text'>Click THIS Row To ADD</div>
+					) : !props.isSelectable ? (
+						<div className='text-muted'>
+							Create a Study Plan first
+						</div>
+					) : props.course.isTaken ? (
+						<div className='text-muted'>Course Added</div>
+					) : props.course.isFullyBooked ? (
+						<div className='text-muted'>Fully booked</div>
 					) : (
-						<div className='text-muted'>Please login first</div>
-					)}
-				</Col>
-				<Col className='d-flex justify-content-center'>
-					<ShowConflictBadges
-						course={props.course}
-						selectedCoursesList={props.selectedCoursesList}
-					/>
-				</Col>
-				<Col className='d-flex align-content-center'>
-					<ShowPreparatoryBadge
-						course={props.course}
-						selectedCoursesList={props.selectedCoursesList}
-					/>
-				</Col>
-			</Row>
-		</ListGroup.Item>
+						<div className='text-muted'>
+							Please check the constraint
+						</div>
+					)
+				) : (
+					<div className='text-muted'>Please login first</div>
+				)}
+			</Col>
+			<Col className='d-flex justify-content-center'>
+				<ShowConflictBadges
+					course={props.course}
+					selectedCoursesList={props.selectedCoursesList}
+				/>
+			</Col>
+			<Col className='d-flex align-content-center'>
+				<ShowPreparatoryBadge
+					course={props.course}
+					selectedCoursesList={props.selectedCoursesList}
+				/>
+			</Col>
+		</Row>
 	);
 }
 
@@ -180,7 +176,7 @@ function ShowConflictBadges(props) {
 			<div className='text-muted'>Incompatible with</div>
 			{props.course.incompatibleCodes.map(code => (
 				<Badge
-					className='ms-1'
+					className='mx-1'
 					bg={
 						props.course.conflictsList &&
 						props.course.conflictsList.includes(code)
@@ -199,7 +195,7 @@ function ShowPreparatoryBadge(props) {
 		<>
 			<div className='text-muted'>Needs</div>
 			<Badge
-				className='ms-1'
+				className='mx-1'
 				bg={props.course.hasPreparatory ? 'success' : 'warning'}>
 				{props.course.preparatoryCourseCode}
 			</Badge>
@@ -208,15 +204,3 @@ function ShowPreparatoryBadge(props) {
 		<Badge bg='success'>No Preparatory Required!</Badge>
 	);
 }
-
-const defaultStyles = {
-	transition: `opacity 300ms ease-in-out`,
-	opacity: 0
-};
-
-const transitionStyles = {
-	entering: { opacity: 1 },
-	entered: { opacity: 1 },
-	exiting: { opacity: 0 },
-	exited: { opacity: 0 }
-};

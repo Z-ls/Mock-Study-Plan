@@ -120,8 +120,12 @@ function WelcomeMessage(props) {
 	return (
 		<Row className='d-inline justify-content-evenly'>
 			<Col className='d-inline justify-content-start align-items-center'>
-				Hello! {props.user.matricola} {props.user.first_name}{' '}
-				{props.user.last_name} !
+				Hello!{' '}
+				<strong>
+					{' '}
+					{props.user.matricola} {props.user.first_name}{' '}
+					{props.user.last_name} !
+				</strong>
 			</Col>
 			<Col className='d-inline justify-content-end align-items-center'>
 				<Button
@@ -133,15 +137,5 @@ function WelcomeMessage(props) {
 				</Button>
 			</Col>
 		</Row>
-	);
-}
-
-function LoginButtonWithPopup(props) {
-	return (
-		<Popover placement='bottom'>
-			<Popover.Body>
-				<strong>{props.errMessage}</strong>
-			</Popover.Body>
-		</Popover>
 	);
 }

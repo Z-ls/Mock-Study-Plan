@@ -8,7 +8,6 @@ import {
 	Badge,
 	Modal
 } from 'react-bootstrap';
-import { fetchAvailableCourses } from './models/AvailableCoursesFunctions';
 const listFunctions = require('./models/SelectedCoursesFunctions');
 
 export function SelectedCoursesList(props) {
@@ -124,7 +123,7 @@ export function SelectedCoursesList(props) {
 export function CreateNewStudyPlanRow(props) {
 	return (
 		<Row className='d-flex justify-content-center'>
-			<Col className='d-flex justify-content-center'>
+			<Col className='d-flex justify-content-evenly'>
 				<Button
 					className='mx-2'
 					variant='primary'
@@ -169,12 +168,12 @@ function ListActions(props) {
 							);
 							props.setHasSent(true);
 						}}>
-						SAVE
+						SAVE THIS STUDY PLAN
 					</Button>
 				</Col>
 				<Col className='d-flex justify-content-end'>
 					<Button
-						className='ms-1'
+						className='mx-1'
 						variant='light'
 						onClick={() => {
 							listFunctions.fetchSelectedCourses(
@@ -188,7 +187,7 @@ function ListActions(props) {
 						CANCEL
 					</Button>
 					<Button
-						className='ms-1'
+						className='mx-1'
 						variant='warning'
 						onClick={() => {
 							props.setSelectedCoursesList([]);
@@ -198,7 +197,7 @@ function ListActions(props) {
 						CLEAR
 					</Button>
 					<Button
-						className='ms-1'
+						className='mx-1'
 						variant='danger'
 						onClick={() => {
 							if (deleteConfirm) {
