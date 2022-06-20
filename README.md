@@ -13,12 +13,12 @@
 
 ### GET
 
-- /api/courses/
+- `/api/courses/`
   - Request: _None_
   - Respond:
     - body: complete available course list.
 
-- /api/course/:code
+- `/api/course/:code`
   - Request:
     - params:
       - code: the code of requesting course
@@ -26,7 +26,7 @@
     - body:
       - the course described by the code
 
-- /api/studyPlans/:matricola
+- `/api/studyPlans/:matricola`
   - Request:
     - params:
       - matricola: the student number(with initial s) of the requesting student
@@ -34,7 +34,7 @@
     - body:
       - the list of selected courses belonging to the student
 
-- /api/sessions/current
+- `/api/sessions/current`
   - Request: _None_
   - Respond:
     - If authenticated, the current session maintained by express-session.js
@@ -42,7 +42,7 @@
 
 ### POST
 
-- /api/sessions/current
+- `/api/sessions/current`
   - Request:
     - Credentials: the user's information for authentication
   - Respond:
@@ -51,7 +51,7 @@
   
 ### PUT
 
-- /api/studyPlans/:matricola
+- `/api/studyPlans/:matricola`
   - Update the study plan (including "deleting")
   - Request:
     - params:
@@ -61,7 +61,7 @@
       - If updating successfully, a status 201 without any message
       - If failed, a 503 with a json message of the reason
 
-- /api/courses/book/:code
+- `/api/courses/book/:code`
   - Booking a course
   - Request:
     - params:
@@ -72,7 +72,7 @@
       - Status 404 for no courses found
       - Status 503 for general errors
 
-- /api/courses/unBook/:code
+- `/api/courses/unBook/:code`
   - Un-booking a course
   - Request:
     - params:
@@ -85,7 +85,7 @@
 
 ### DELETE
 
-- /api/sessions/current
+- `/api/sessions/current`
 - Remove current session of user(log out)
   - Request: _None_
   - Respond: _None_

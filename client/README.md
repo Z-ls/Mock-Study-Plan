@@ -2,7 +2,7 @@
 
 ## Overview
 
-> ### The goal is to make the application operates **exactly** the way you imagine when you see the screenshot
+> The goal is to make the application operates **exactly** the way you'd imagine when you see the screenshot
 
 The front-end components of the web application "Study Plan" is developed using React.js and other supporting modules (mostly vanilla, see `package.json`), which is set to running on `http://localhost:3000`
 
