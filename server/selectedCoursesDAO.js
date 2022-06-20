@@ -42,7 +42,6 @@ exports.deleteStudyPlan = matricola => {
 		const query = 'DELETE FROM Study_Plans WHERE matricola = ?';
 		db.run(query, [matricola], function (err) {
 			if (err) {
-				console.log(err);
 				reject(err);
 			} else resolve(this.changes ? true : false);
 		});

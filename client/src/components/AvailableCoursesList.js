@@ -9,11 +9,7 @@ export function AvailableCoursesList(props) {
 			props.setAvailableCoursesList,
 			props.selectedCoursesList
 		);
-	}, [
-		// props.isSelectable,
-		props.setAvailableCoursesList,
-		props.selectedCoursesList
-	]);
+	}, [props.setAvailableCoursesList, props.selectedCoursesList]);
 
 	return (
 		<Container fluid>
@@ -78,7 +74,6 @@ function ListRow(props) {
 		<>
 			<ListGroup.Item
 				action
-				// eventKey={'event_avail_' + props.course.code}
 				variant={
 					isCourseValid || !props.hasLoggedIn
 						? ' '

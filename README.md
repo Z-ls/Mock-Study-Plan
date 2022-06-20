@@ -42,6 +42,16 @@
 
 ### POST
 
+- `/api/studyPlans/:matricola`
+  - Request:
+    - params:
+      - matricola: the student number(with initial s) of the requesting student
+    - body:
+      - The object with the study plan and the boolean value indicating the list being full time or not
+  - Respond:
+    - body:
+      - the list of selected courses belonging to the student
+
 - `/api/sessions/current`
   - Request:
     - Credentials: the user's information for authentication
@@ -56,9 +66,12 @@
   - Request:
     - params:
       - matricola: the student number(with initial s) of the requesting student
+    - body:
+      - The object with the study plan and the boolean value indicating the list being full time or not
   - Respond:
     - body:
       - If updating successfully, a status 201 without any message
+      - If not found, a status 404
       - If failed, a 503 with a json message of the reason
 
 - `/api/courses/book/:code`
@@ -84,6 +97,15 @@
       - Status 503 for general errors
 
 ### DELETE
+
+- `/api/studyPlans/:matricola`
+  - Request:
+    - params:
+      - matricola: the student number(with initial s) of the requesting student
+  - Respond:
+    - Status 204 on success
+    - Status 404 on entries not found
+    - Status 500 otherwise
 
 - `/api/sessions/current`
 - Remove current session of user(log out)

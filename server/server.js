@@ -230,8 +230,8 @@ app.put(
 				req.body.courses
 			)
 			.then(
-				() => {
-					return res.status(201).end();
+				ret => {
+					return ret ? res.status(201).end() : res.status(404).end();
 				},
 				err => {
 					return res.status(503).json(err);
@@ -247,7 +247,9 @@ app.delete(
 	async (req, res) => {
 		return await studyPlanDAO.deleteStudyPlan(req.params.matricola).then(
 			studyPlan => {
-				return res.status(204).json(studyPlan);
+				return studyPlan
+					? res.status(204).end()
+					: res.status(404).end();
 			},
 			err => {
 				return res.status(500).send(err);
