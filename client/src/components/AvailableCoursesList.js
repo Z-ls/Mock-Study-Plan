@@ -45,7 +45,6 @@ export function AvailableCoursesList(props) {
 function ListContent(props) {
 	return props.availableCoursesList.map(course => (
 		<ListRow
-			key={'avail-' + course.code}
 			isReady={props.isReady}
 			setIsReady={props.setIsReady}
 			isSelectable={props.isSelectable}
@@ -60,7 +59,7 @@ function ListContent(props) {
 function ListRow(props) {
 	const [showStatus, setShowStatus] = useState(false);
 
-	const isCourseValid =
+	const isAddable =
 		!(
 			props.course.isFullyBooked ||
 			props.course.isTaken ||
@@ -74,8 +73,11 @@ function ListRow(props) {
 		<>
 			<ListGroup.Item
 				action
+				key={'avail-' + props.course.code}
 				variant={
-					isCourseValid || !props.hasLoggedIn
+					// If the user has not logged in, it renders white background
+					// This is for avoiding the list from becoming "all-red" on start
+					isAddable || !props.hasLoggedIn
 						? ' '
 						: props.isSelectable &&
 						  props.hasLoggedIn &&
@@ -95,7 +97,6 @@ function ListRow(props) {
 				</Row>
 				{showStatus && (
 					<ListRowStatus
-						key={'status-' + props.course.code}
 						isReady={props.isReady}
 						setIsReady={props.setIsReady}
 						isSelectable={props.isSelectable}
@@ -103,7 +104,7 @@ function ListRow(props) {
 						showStatus={showStatus}
 						selectedCoursesList={props.selectedCoursesList}
 						setSelectedCoursesList={props.setSelectedCoursesList}
-						addable={isCourseValid}
+						isAddable={isAddable}
 						course={props.course}
 					/>
 				)}
@@ -112,18 +113,23 @@ function ListRow(props) {
 	);
 }
 
+// In early version, this row is another row of ListGroup.Item
+// But thus it visually separated itself from the parent-row
+// To emphasize the parent-child relationship, it was changed to a single row
+// Shortcoming is, it cannot be "disabled" as when it was a ListGroup.Item
+// Now you can still click on the row, just nothing happens, plus cursor shows different
 function ListRowStatus(props) {
 	return (
 		<Row
 			as='li'
 			className={
-				props.addable
+				props.isAddable
 					? 'allowed-status'
 					: 'blocked-status ' +
 					  'd-flex align-items-center justify-content-between'
 			}
 			onClick={() => {
-				if (props.addable)
+				if (props.isAddable)
 					addSelectedCourse(
 						props.course,
 						props.setSelectedCoursesList
@@ -138,7 +144,7 @@ function ListRowStatus(props) {
 			/>
 			<Col>
 				{props.hasLoggedIn ? (
-					props.addable ? (
+					props.isAddable ? (
 						<div className='text'>Click THIS Row To ADD</div>
 					) : !props.isSelectable ? (
 						<div className='text-muted'>

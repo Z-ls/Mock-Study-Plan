@@ -9,10 +9,16 @@ export const fetchAvailableCourses = async (
 	setAvailableCoursesStatus(setAvailableCoursesList, selectedCoursesList);
 };
 
+// In early versions, the "Marking Function" below is separated from fetching.
+// However considering the situation where multiple users may operate concurrently,
+// It would be better that the application fetches frequently, which leads to a frequency
+// almost frequent as marking, so for simplicity they are combined together.
 export const setAvailableCoursesStatus = (
 	setAvailableCoursesList,
 	selectedCoursesList
 ) => {
+	// If the study plan is not fetched yet/is empty,
+	// We just mark courses with preparatory constraint and fully booked ones.
 	if (selectedCoursesList.length === 0) {
 		setAvailableCoursesList(availableCoursesList =>
 			availableCoursesList.map(availableCourseOriginal => {
@@ -27,6 +33,11 @@ export const setAvailableCoursesStatus = (
 				return availableCourse;
 			})
 		);
+		// Otherwise we perform the complete check
+
+		// One thing I was really hesitant about was if we should add those "temporary properties" from the beginning
+		// But later it is decided that we preserve only the information fetched from the database
+		// And go "Whatever happens in the frontend stays in the frontend, until you submit"
 	} else
 		setAvailableCoursesList(availableCoursesList =>
 			availableCoursesList.map(availableCourseOriginal => {

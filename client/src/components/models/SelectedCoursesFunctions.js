@@ -4,6 +4,8 @@ import {
 	deleteStudyPlan
 } from '../../API';
 
+// Functions about the whole table and APIs
+
 export const fetchSelectedCourses = async (
 	setSelectedCoursesList,
 	setIsFullTime,
@@ -26,6 +28,12 @@ export const updateSelectedCourses = (
 	updateStudyPlan(matricola, isFullTime, selectedCoursesList);
 };
 
+export const deleteCurrentStudyPlan = async matricola => {
+	await deleteStudyPlan(matricola);
+};
+
+// Functions involving the table and its content
+
 export const addSelectedCourse = (course, setSelectedCoursesList) => {
 	if (
 		!(
@@ -47,9 +55,7 @@ export const removeSelectedCourse = async (
 	);
 };
 
-export const deleteCurrentStudyPlan = async matricola => {
-	await deleteStudyPlan(matricola);
-};
+// Functions for checking constraints
 
 export const checkFullyBooked = selectedCoursesList => {
 	return !selectedCoursesList.some(
@@ -100,6 +106,8 @@ export const checkCredits = (
 export const alterFullTime = setIsFullTime => {
 	setIsFullTime(isFullTime => !isFullTime);
 };
+
+// Extra functions
 
 export const changeListVariant = (isValidList, listSent) => {
 	if (!listSent) {

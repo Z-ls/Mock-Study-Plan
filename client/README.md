@@ -50,3 +50,10 @@ After *definition* of study plans, that is:
 - The user will be able to **Save the defined study plan** when there is no constraint violations in the study plan, this including:
   - Consists courses credits satisfying corresponding thresholds.
   - Does not contain any violations of constraints. This is enforced the application itself.
+
+## Side-note
+
+### Scrollbar
+
+- The scrollbar is hidden due to aesthetic reasons. So if the user is using Chrome the scrollbar is invisible.
+  - However if the user is using Firefox, a scrollbar will show up whenever user hovers on the tables (which is nice).
