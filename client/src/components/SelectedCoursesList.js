@@ -331,8 +331,8 @@ function ListRow(props) {
 				}
 			}}>
 			<Row>
-				<Col lg={1}>{props.course.code}</Col>
-				<Col lg={6}>{props.course.name}</Col>
+				<Col lg={2}>{props.course.code}</Col>
+				<Col lg={5}>{props.course.name}</Col>
 				{!hasPreparatory && (
 					<Col lv={2}>
 						<Badge bg='warning'>

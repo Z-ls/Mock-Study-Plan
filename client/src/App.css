@@ -2,6 +2,10 @@
 	display: none;
 }
 
-.status-row:hover {
+.allowed-status:hover {
 	opacity: 0.5
+}
+
+.blocked-status:hover {
+	cursor: not-allowed;
 }

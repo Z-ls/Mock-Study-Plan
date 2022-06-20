@@ -155,7 +155,9 @@ app.delete('/api/sessions/current', (req, res) => {
 app.get('/api/courses', async (req, res) => {
 	return await coursesDAO.getAllCourses().then(
 		courses => {
-			return res.status(200).json(courses);
+			return courses
+				? res.status(200).json(courses)
+				: res.status(404).end();
 		},
 		err => {
 			return res.status(500).send(err);
@@ -183,12 +185,36 @@ app.get(
 	async (req, res) => {
 		return await studyPlanDAO.getStudyPlanById(req.params.matricola).then(
 			studyPlan => {
-				return res.status(200).json(studyPlan);
+				return studyPlan
+					? res.status(200).json(studyPlan)
+					: res.status(404).end();
 			},
 			err => {
 				return res.status(500).send(err);
 			}
 		);
+	}
+);
+
+app.post(
+	'/api/studyPlans/:matricola',
+	isLoggedIn,
+	validateRequest,
+	async (req, res) => {
+		return await studyPlanDAO
+			.addStudyPlan(
+				req.params.matricola,
+				req.body.isFullTime,
+				req.body.courses
+			)
+			.then(
+				() => {
+					return res.status(201).end();
+				},
+				err => {
+					return res.status(503).json(err);
+				}
+			);
 	}
 );
 
@@ -211,6 +237,22 @@ app.put(
 					return res.status(503).json(err);
 				}
 			);
+	}
+);
+
+app.delete(
+	'/api/studyPlans/:matricola',
+	isLoggedIn,
+	validateRequest,
+	async (req, res) => {
+		return await studyPlanDAO.deleteStudyPlan(req.params.matricola).then(
+			studyPlan => {
+				return res.status(204).json(studyPlan);
+			},
+			err => {
+				return res.status(500).send(err);
+			}
+		);
 	}
 );
 

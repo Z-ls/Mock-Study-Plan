@@ -61,11 +61,3 @@ INSERT INTO Users(matricola, first_name, last_name, hex, salt) VALUES
 ("s500000", "Taro", "Yamada", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
 ("s000000", "Si", "Li", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21"),
 ("s999999", "Wu", "Wang", "e06a2f2073a3d66d1ca4fd6ce04c64fe684ea19c27660b05e2fbf7269ce9ff42", "72e4eeb14def3b21");
-INSERT INTO Study_Plans(matricola, is_full_time, courses) VALUES
-("s000000", null, null), 
-("s100000", null, null),
-("s200000", null, null),
-("s300000", null, null),
-("s400000", null, null),
-("s500000", null, null),
-("s999999", null, null);

@@ -15,6 +15,17 @@ exports.getStudyPlanById = matricola => {
 	});
 };
 
+exports.addStudyPlan = (matricola, isFullTime, courses) => {
+	return new Promise((resolve, reject) => {
+		const query =
+			'INSERT INTO Study_Plans(courses, is_full_time, matricola) VALUES (?, ?, ?)';
+		db.run(query, [courses, isFullTime, matricola], function (err) {
+			if (err) reject(err);
+			else resolve(this.changes ? true : false);
+		});
+	});
+};
+
 exports.updateStudyPlan = (matricola, isFullTime, courses) => {
 	return new Promise((resolve, reject) => {
 		const query =
@@ -28,11 +39,12 @@ exports.updateStudyPlan = (matricola, isFullTime, courses) => {
 
 exports.deleteStudyPlan = matricola => {
 	return new Promise((resolve, reject) => {
-		const query =
-			'UPDATE Study_Plans SET courses = null, is_full_time = null WHERE matricola = ?';
+		const query = 'DELETE FROM Study_Plans WHERE matricola = ?';
 		db.run(query, [matricola], function (err) {
-			if (err) reject(err);
-			else resolve(this.changes ? true : false);
+			if (err) {
+				console.log(err);
+				reject(err);
+			} else resolve(this.changes ? true : false);
 		});
 	});
 };

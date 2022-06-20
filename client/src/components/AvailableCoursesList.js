@@ -10,7 +10,7 @@ export function AvailableCoursesList(props) {
 			props.selectedCoursesList
 		);
 	}, [
-		props.isSelectable,
+		// props.isSelectable,
 		props.setAvailableCoursesList,
 		props.selectedCoursesList
 	]);
@@ -100,6 +100,7 @@ function ListRow(props) {
 				</Row>
 				{showStatus && (
 					<ListRowStatus
+						key={'status-' + props.course.code}
 						isReady={props.isReady}
 						setIsReady={props.setIsReady}
 						isSelectable={props.isSelectable}
@@ -120,9 +121,18 @@ function ListRowStatus(props) {
 	return (
 		<Row
 			as='li'
-			className='status-row d-flex align-items-center justify-content-between'
+			className={
+				props.addable
+					? 'allowed-status'
+					: 'blocked-status ' +
+					  'd-flex align-items-center justify-content-between'
+			}
 			onClick={() => {
-				addSelectedCourse(props.course, props.setSelectedCoursesList);
+				if (props.addable)
+					addSelectedCourse(
+						props.course,
+						props.setSelectedCoursesList
+					);
 			}}>
 			<hr
 				style={{
