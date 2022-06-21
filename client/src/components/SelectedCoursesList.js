@@ -153,9 +153,9 @@ function ListActions(props) {
 							props.setHasSent(true);
 							// Motivation: why fetch here?
 							// This fetching could be seen as a "synchronization" between server and client,
-							// in case of inconsistent values between them, as the "updating" and "deleting" are of great importance
-							// But instant fetching could lead to getting outdated information so there is a timeout
-							// As this fetching is not blocking any operation, maybe we can call it being "pseudo-asynchronous"
+							// in case of inconsistent data between them, as the "updating" and "deleting" are of great importance
+							// But instant-fetching could lead to getting outdated information so there is a timeout
+							// As this fetching is not blocking any operation, maybe we can call it "pseudo-asynchronous"
 							setTimeout(
 								() =>
 									listFunctions.fetchSelectedCourses(

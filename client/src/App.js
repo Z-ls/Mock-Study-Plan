@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
 	UnauthenticatedUserView,
 	SelectedCoursesView
-} from './components/StudyPlanViews';
-import { checkAuth } from './components/models/AuthFunctions';
-import './App.css';
+} from "./components/StudyPlanViews";
+import { checkAuth } from "./components/models/AuthFunctions";
+import "./App.css";
 
 function App() {
+	// In early versions, I had tried putting states and functions involving them in another (class) file
+	// That I created a "state class", not for fancy stuff, just too many states are a little bit difficult to locate
+	// Which as you can guess, led to serious re-rendering problem and the application ran like Internet Explorer(rip).
+	// Alternatively I create an object containing those classes, which is supposed to be no differences from passing one-by-one
+	// Because they will be all passed down after all, when any of they do change, the component will be rerendered anyway.
 	const [availableCoursesList, setAvailableCoursesList] = useState([]);
 	const [selectedCoursesList, setSelectedCoursesList] = useState([]);
 	const [isSelectable, setIsSelectable] = useState(false);
@@ -37,14 +42,14 @@ function App() {
 		<Router>
 			<Routes>
 				<Route
-					path='/'
+					path="/"
 					element={
 						<UnauthenticatedUserView
 							viewStatesAndHooks={viewStatesAndHooks}
 						/>
 					}>
 					<Route
-						path='edit'
+						path="edit"
 						element={
 							<SelectedCoursesView
 								viewStatesAndHooks={viewStatesAndHooks}
