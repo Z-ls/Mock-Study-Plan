@@ -1,14 +1,6 @@
-import { useEffect, useState } from 'react';
-import {
-	Container,
-	Row,
-	Col,
-	ListGroup,
-	Button,
-	Badge,
-	Modal
-} from 'react-bootstrap';
-const listFunctions = require('./models/SelectedCoursesFunctions');
+import { useEffect, useState } from "react";
+import { Container, Row, Col, ListGroup, Button, Badge, Modal } from "react-bootstrap";
+const listFunctions = require("./models/SelectedCoursesFunctions");
 
 export function SelectedCoursesList(props) {
 	const [isEmpty, setIsEmpty] = useState(true);
@@ -54,13 +46,7 @@ export function SelectedCoursesList(props) {
 			minCredits
 		);
 		setIsValid(isCreditValid);
-	}, [
-		setHasSent,
-		setCurrCredits,
-		maxCredits,
-		minCredits,
-		props.selectedCoursesList
-	]);
+	}, [setHasSent, setCurrCredits, maxCredits, minCredits, props.selectedCoursesList]);
 
 	return isEmpty ? (
 		<Container fluid>
@@ -96,16 +82,14 @@ export function SelectedCoursesList(props) {
 					currCredits={currCredits}
 					maxCredits={maxCredits}
 				/>
-				<ListGroup.Item
-					className='d-none d-xl-block'
-					id='selList'>
+				<ListGroup.Item className="d-none d-xl-block">
 					<Row>
 						<Col lg={1}>Code</Col>
 						<Col lg={6}>Name</Col>
 					</Row>
 				</ListGroup.Item>
 			</ListGroup>
-			<ListGroup style={{ overflow: 'auto', maxHeight: '300px' }}>
+			<ListGroup style={{ overflow: "auto", maxHeight: "300px" }}>
 				<ListContent
 					selectedCoursesList={props.selectedCoursesList}
 					setAvailableCoursesList={props.setAvailableCoursesList}
@@ -122,11 +106,11 @@ export function SelectedCoursesList(props) {
 
 export function CreateNewStudyPlanRow(props) {
 	return (
-		<Row className='d-flex justify-content-center'>
-			<Col className='d-flex justify-content-evenly'>
+		<Row className="d-flex justify-content-center">
+			<Col className="d-flex justify-content-evenly">
 				<Button
-					className='mx-2'
-					variant='primary'
+					className="mx-2"
+					variant="primary"
 					onClick={() => {
 						props.setIsSelectable(true);
 						props.setIsEmpty(false);
@@ -135,8 +119,8 @@ export function CreateNewStudyPlanRow(props) {
 					Create a Full-Time Study Plan
 				</Button>
 				<Button
-					className='mx-2'
-					variant='primary'
+					className="mx-2"
+					variant="primary"
 					onClick={() => {
 						props.setIsSelectable(true);
 						props.setIsEmpty(false);
@@ -155,10 +139,10 @@ function ListActions(props) {
 
 	return (
 		<ListGroup.Item>
-			<Row className='d-flex justify-content-around'>
-				<Col className='d-flex justify-content-start'>
+			<Row className="d-flex justify-content-around">
+				<Col className="d-flex justify-content-start">
 					<Button
-						variant='success'
+						variant="success"
 						disabled={!props.isValid}
 						onClick={() => {
 							listFunctions.updateSelectedCourses(
@@ -171,10 +155,10 @@ function ListActions(props) {
 						SAVE THIS STUDY PLAN
 					</Button>
 				</Col>
-				<Col className='d-flex justify-content-end'>
+				<Col className="d-flex justify-content-end">
 					<Button
-						className='mx-1'
-						variant='light'
+						className="mx-1"
+						variant="light"
 						onClick={() => {
 							listFunctions.fetchSelectedCourses(
 								props.setSelectedCoursesList,
@@ -187,8 +171,8 @@ function ListActions(props) {
 						CANCEL
 					</Button>
 					<Button
-						className='mx-1'
-						variant='warning'
+						className="mx-1"
+						variant="warning"
 						onClick={() => {
 							props.setSelectedCoursesList([]);
 							props.setHasSent(false);
@@ -197,16 +181,14 @@ function ListActions(props) {
 						CLEAR
 					</Button>
 					<Button
-						className='mx-1'
-						variant='danger'
+						className="mx-1"
+						variant="danger"
 						onClick={() => {
 							if (deleteConfirm) {
 								props.setSelectedCoursesList([]);
 								props.setIsEmpty(true);
 								props.setIsSelectable(false);
-								listFunctions.deleteCurrentStudyPlan(
-									props.matricola
-								);
+								listFunctions.deleteCurrentStudyPlan(props.matricola);
 								// Motivation: why fetch here?
 								// This fetching could be seen as a "synchronization" between server and client,
 								// in case of inconsistent values between them, as the "deleting" operation is of great importance
@@ -227,40 +209,38 @@ function ListActions(props) {
 							setDeleteConfirm(false);
 							props.setHasSent(true);
 						}}>
-						{!deleteConfirm ? 'DELETE' : 'CONFIRM DELETE'}
+						{!deleteConfirm ? "DELETE" : "CONFIRM DELETE"}
 					</Button>
 
 					{/* Sorry if this looks messy, 
 						the modal originally resided outside this file, but it triggers constant rerendering and not showing up,
-						that I do not have a better solution to resolve that issue, so I just put it here.
+						I do not have a solution to resolve that issue, so I just put it here.
 						Aside from all this piece of code I really think it's worth the space, the confirmation is really important imo. */}
 					<Modal
 						show={showDialog}
 						onHide={() => setShowDialog(() => false)}
-						size='lg'
-						backdrop='static'
+						size="lg"
+						backdrop="static"
 						centered>
 						<Modal.Header closeButton>
-							<Modal.Title>
-								This operation is irreversible!
-							</Modal.Title>
+							<Modal.Title>This operation is irreversible!</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
-							<Row className='text-danger d-flex justify-content-center'>
-								This operation will delete the current study
-								plan from both the client AND the server.
+							<Row className="text-danger d-flex justify-content-center">
+								This operation will delete the current study plan from
+								both the client AND the server
 							</Row>
-							<Row className='text-danger d-flex justify-content-center'>
+							<Row className="text-danger d-flex justify-content-center">
 								Are you sure about this?
 							</Row>
-							<Row className='text d-flex justify-content-center'>
-								After confirmation, you can click the delete
-								button again to take effect the deletion.
+							<Row className="text d-flex justify-content-center">
+								After confirmation, you can click the delete button again
+								to take effect the deletion.
 							</Row>
 						</Modal.Body>
 						<Modal.Footer>
 							<Button
-								variant='success'
+								variant="success"
 								onClick={() => {
 									setDeleteConfirm(true);
 									setShowDialog(false);
@@ -268,7 +248,7 @@ function ListActions(props) {
 								I know what I am doing
 							</Button>
 							<Button
-								variant='light'
+								variant="light"
 								onClick={() => setShowDialog(false)}>
 								Close
 							</Button>
@@ -283,18 +263,15 @@ function ListActions(props) {
 function RowCredits(props) {
 	return (
 		<ListGroup.Item
-			variant={listFunctions.changeListVariant(
-				props.isValid,
-				props.hasSent
-			)}>
+			variant={listFunctions.changeListVariant(props.isValid, props.hasSent)}>
 			<Row>
-				<Col className='d-flex justify-content-start'>
+				<Col className="d-flex justify-content-start">
 					Min Credits: {props.minCredits}
 				</Col>
-				<Col className='d-flex justify-content-center'>
+				<Col className="d-flex justify-content-center">
 					Current Credits: {props.currCredits}
 				</Col>
-				<Col className='d-flex justify-content-end'>
+				<Col className="d-flex justify-content-end">
 					Max Credits: {props.maxCredits}
 				</Col>
 			</Row>
@@ -305,7 +282,6 @@ function RowCredits(props) {
 function ListContent(props) {
 	return props.selectedCoursesList.map(course => (
 		<ListRow
-			key={'sel_' + course.code}
 			isValid={props.isValid}
 			selectedCoursesList={props.selectedCoursesList}
 			setSelectedCoursesList={props.setSelectedCoursesList}
@@ -346,7 +322,7 @@ function ListRow(props) {
 				<Col lg={5}>{props.course.name}</Col>
 				{!hasPreparatory && (
 					<Col lv={2}>
-						<Badge bg='warning'>
+						<Badge bg="warning">
 							Required By <></>
 							{
 								listFunctions.findPreparatory(

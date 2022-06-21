@@ -4,9 +4,11 @@
 
 > The goal is to make the application operates **exactly** the way you'd imagine when you see the screenshot
 
-The front-end components of the web application "Study Plan" is developed using React.js and other supporting modules (mostly vanilla, see `package.json`), which is set to running on `http://localhost:3000`
+The front-end components of the web application "Study Plan" is developed using React.js and other supporting modules (mostly vanilla, see `package.json`), which is set to running on `http://localhost:3000`.
 
 The backend part meanwhile is running on `http://localhost:3001` with express.js and other modules.
+
+The application is developed in a way that's *as vanilla as possible*. Near to nothing besides basic React-Bootstrap component or bootstrap tags are used.
 
 ## Unauthenticated Contents
 
