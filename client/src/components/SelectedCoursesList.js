@@ -151,6 +151,22 @@ function ListActions(props) {
 								props.selectedCoursesList
 							);
 							props.setHasSent(true);
+							// Motivation: why fetch here?
+							// This fetching could be seen as a "synchronization" between server and client,
+							// in case of inconsistent values between them, as the "updating" and "deleting" are of great importance
+							// But instant fetching could lead to getting outdated information so there is a timeout
+							// As this fetching is not blocking any operation, maybe we can call it being "pseudo-asynchronous"
+							setTimeout(
+								() =>
+									listFunctions.fetchSelectedCourses(
+										props.setSelectedCoursesList,
+										props.setIsFullTime,
+										props.setIsSelectable,
+										props.setIsEmpty,
+										props.matricola
+									),
+								500
+							);
 						}}>
 						SAVE THIS STUDY PLAN
 					</Button>
@@ -189,11 +205,6 @@ function ListActions(props) {
 								props.setIsEmpty(true);
 								props.setIsSelectable(false);
 								listFunctions.deleteCurrentStudyPlan(props.matricola);
-								// Motivation: why fetch here?
-								// This fetching could be seen as a "synchronization" between server and client,
-								// in case of inconsistent values between them, as the "deleting" operation is of great importance
-								// But instant fetching could lead to getting outdated information so there is a timeout
-								// As this fetching is not blocking any operation, maybe we can call it being "pseudo-asynchronous"
 								setTimeout(
 									() =>
 										listFunctions.fetchSelectedCourses(
@@ -218,7 +229,7 @@ function ListActions(props) {
 						Aside from all this piece of code I really think it's worth the space, the confirmation is really important imo. */}
 					<Modal
 						show={showDialog}
-						onHide={() => setShowDialog(() => false)}
+						onHide={() => setShowDialog(false)}
 						size="lg"
 						backdrop="static"
 						centered>
